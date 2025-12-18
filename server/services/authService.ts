@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { getDatabase } from '../db/database';
 import { config } from '../config/env';
@@ -13,14 +13,15 @@ export class AuthService {
    * Generate JWT token for user
    */
   generateToken(userId: number, username: string): string {
+    const options: SignOptions = { expiresIn: config.jwtExpiresIn as any };
     return jwt.sign(
-      { 
-        userId, 
+      {
+        userId,
         username,
         type: 'admin'
       },
       config.jwtSecret,
-      { expiresIn: config.jwtExpiresIn }
+      options
     );
   }
 
@@ -61,7 +62,7 @@ export class AuthService {
     try {
       // Find user by username (SQLite version)
       const user = db.prepare(
-        'SELECT id, username, password_hash FROM admin_users WHERE username = ?'
+        'SELECT id, username, email, password_hash FROM admin_users WHERE username = ?'
       ).get(username) as AdminUser | undefined;
 
       if (!user) {
@@ -86,6 +87,7 @@ export class AuthService {
         user: {
           id: user.id,
           username: user.username,
+          email: user.email,
         },
       };
     } catch (error) {

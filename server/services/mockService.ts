@@ -1,22 +1,24 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { config } from '../config/env';
 import { logger } from '../config/logger';
+import { GalleryImage as GalleryImageType } from '../types';
 
 // Mock admin user
 const mockAdminUser = {
   id: 1,
   username: 'admin',
-  password_hash: '$2b$10$rOzJqQjQjQjQjQjQjQjQuOzJqQjQjQjQjQjQjQjQjQuOzJqQjQjQjQjQjQ'
+  password_hash: '$2b$10$rOzJqQjQjQjQjQjQjQjQjQuOzJqQjQjQjQjQjQjQjQuOzJqQjQjQjQjQjQ'
 };
 
 // Mock gallery images
-const mockGalleryImages = [
+const mockGalleryImages: GalleryImageType[] = [
   {
     id: 1,
     title: 'Telt i haven',
     description: 'Smukt telt omgivet af grønne træer og blomster',
     image_url: 'https://images.unsplash.com/photo-1523987351232-1ca2c5be4eb5?w=800&h=600&fit=crop',
+    file_path: null,
     sort_order: 1,
     is_active: true,
     created_at: new Date().toISOString(),
@@ -27,6 +29,7 @@ const mockGalleryImages = [
     title: 'Camping plads',
     description: 'Rummelig camping plads med god plads til flere telte',
     image_url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop',
+    file_path: null,
     sort_order: 2,
     is_active: true,
     created_at: new Date().toISOString(),
@@ -37,6 +40,7 @@ const mockGalleryImages = [
     title: 'Haven ved solnedgang',
     description: 'Den smukke have ved solnedgangstidspunkt',
     image_url: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&h=600&fit=crop',
+    file_path: null,
     sort_order: 3,
     is_active: true,
     created_at: new Date().toISOString(),
@@ -48,17 +52,6 @@ export interface AdminUser {
   id: number;
   username: string;
   password_hash: string;
-}
-
-export interface GalleryImage {
-  id: number;
-  title?: string;
-  description?: string;
-  image_url: string;
-  sort_order: number;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
 }
 
 /**
@@ -82,10 +75,11 @@ export class MockAuthService {
       }
 
       // Generate JWT token
+      const options: SignOptions = { expiresIn: config.jwtExpiresIn as any };
       const token = jwt.sign(
         { userId: mockAdminUser.id, username: mockAdminUser.username },
         config.jwtSecret,
-        { expiresIn: config.jwtExpiresIn }
+        options
       );
 
       const { password_hash, ...userWithoutPassword } = mockAdminUser;
@@ -116,7 +110,7 @@ export class MockGalleryService {
   /**
    * Get all active gallery images (for public frontend)
    */
-  static getActiveImages(): GalleryImage[] {
+  static getActiveImages(): GalleryImageType[] {
     return mockGalleryImages
       .filter(img => img.is_active)
       .sort((a, b) => a.sort_order - b.sort_order);
@@ -125,28 +119,28 @@ export class MockGalleryService {
   /**
    * Get all gallery images (for admin)
    */
-  static getAllImages(): GalleryImage[] {
+  static getAllImages(): GalleryImageType[] {
     return mockGalleryImages.sort((a, b) => a.sort_order - b.sort_order);
   }
 
   /**
    * Get image by ID
    */
-  static getImageById(id: number): GalleryImage | null {
+  static getImageById(id: number): GalleryImageType | null {
     return mockGalleryImages.find(img => img.id === id) || null;
   }
 
   /**
    * Create new image
    */
-  static createImage(imageData: Omit<GalleryImage, 'id' | 'created_at' | 'updated_at'>): GalleryImage {
-    const newImage: GalleryImage = {
+  static createImage(imageData: Omit<GalleryImageType, 'id' | 'created_at' | 'updated_at'>): GalleryImageType {
+    const newImage: GalleryImageType = {
       id: Math.max(...mockGalleryImages.map(img => img.id)) + 1,
       ...imageData,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
-    
+
     mockGalleryImages.push(newImage);
     return newImage;
   }
@@ -154,7 +148,7 @@ export class MockGalleryService {
   /**
    * Update image
    */
-  static updateImage(id: number, updates: Partial<GalleryImage>): GalleryImage | null {
+  static updateImage(id: number, updates: Partial<GalleryImageType>): GalleryImageType | null {
     const imageIndex = mockGalleryImages.findIndex(img => img.id === id);
     if (imageIndex === -1) {
       return null;

@@ -15,7 +15,7 @@ export class GalleryController {
   /**
    * Get all active gallery images (public endpoint)
    */
-  async getActiveImages(req: Request, res: Response): Promise<void> {
+  async getActiveImages(_req: Request, res: Response): Promise<void> {
     try {
       const images = await galleryRepository.getActiveImages();
       
@@ -39,7 +39,7 @@ export class GalleryController {
   /**
    * Get all gallery images (admin endpoint)
    */
-  async getAllImages(req: Request, res: Response): Promise<void> {
+  async getAllImages(_req: Request, res: Response): Promise<void> {
     try {
       const images = await galleryRepository.getAllImages();
       

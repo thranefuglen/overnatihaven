@@ -1,4 +1,4 @@
-import multer, { Express } from 'multer';
+import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { Request, Response, NextFunction } from 'express';
@@ -19,12 +19,12 @@ function ensureUploadDir(dir: string): void {
  * Configure multer storage
  */
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (_req, _file, cb) => {
     const uploadDir = config.upload.uploadDir;
     ensureUploadDir(uploadDir);
     cb(null, uploadDir);
   },
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     // Create unique filename with timestamp and random string
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 8);
@@ -37,7 +37,7 @@ const storage = multer.diskStorage({
 /**
  * File filter for allowed image types
  */
-const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowedTypes = config.upload.allowedTypes;
   const fileMime = file.mimetype.toLowerCase();
   

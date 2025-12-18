@@ -64,7 +64,8 @@ export type InquiryStatus = Inquiry['status'];
 export const createGalleryImageSchema = z.object({
   title: z.string().min(1, 'Titel er påkrævet').max(255, 'Titel må max være 255 tegn'),
   description: z.string().max(1000, 'Beskrivelse må max være 1000 tegn').optional(),
-  image_url: z.string().url('Ugyldig URL').optional(),
+  image_url: z.string().optional(),
+  file_path: z.string().optional(),
   is_active: z.boolean().default(true),
   sort_order: z.number().int().min(0, 'Sort order skal være positiv').default(0),
 });

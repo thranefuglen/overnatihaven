@@ -43,7 +43,7 @@ export const config = {
     allowedTypes: (process.env.ALLOWED_FILE_TYPES || 'image/jpeg,image/jpg,image/png,image/webp').split(','),
     uploadDir: process.env.UPLOAD_DIR || './uploads/gallery',
   },
-} as const;
+};
 
 export const isDevelopment = config.nodeEnv === 'development';
 export const isProduction = config.nodeEnv === 'production';

@@ -17,17 +17,15 @@ export async function seedDatabase(): Promise<void> {
     const passwordHash = await bcrypt.hash(adminPassword, 10);
 
     // Check if admin user already exists
-    const [existingAdmin] = await db.execute(
-      'SELECT id FROM admin_users WHERE username = ? OR email = ?',
-      [adminUsername, adminEmail]
-    );
+    const existingAdmin = db.prepare(
+      'SELECT id FROM admin_users WHERE username = ? OR email = ?'
+    ).get(adminUsername, adminEmail);
 
-    if ((existingAdmin as any[]).length === 0) {
-      await db.execute(
-        `INSERT INTO admin_users (username, email, password_hash, is_active) 
-         VALUES (?, ?, ?, ?)`,
-        [adminUsername, adminEmail, passwordHash, true]
-      );
+    if (!existingAdmin) {
+      db.prepare(
+        `INSERT INTO admin_users (username, email, password_hash, is_active)
+         VALUES (?, ?, ?, ?)`
+      ).run(adminUsername, adminEmail, passwordHash, 1);
       console.log('✓ Default admin user created');
       console.log(`  Username: ${adminUsername}`);
       console.log(`  Password: ${adminPassword}`);
@@ -37,11 +35,11 @@ export async function seedDatabase(): Promise<void> {
     }
 
     // Add some sample gallery images if none exist
-    const [existingImages] = await db.execute(
+    const existingImages = db.prepare(
       'SELECT COUNT(*) as count FROM gallery_images'
-    );
+    ).get() as { count: number };
 
-    const imageCount = (existingImages as any[])[0].count;
+    const imageCount = existingImages.count;
 
     if (imageCount === 0) {
       const sampleImages = [
@@ -72,11 +70,10 @@ export async function seedDatabase(): Promise<void> {
       ];
 
       for (const image of sampleImages) {
-        await db.execute(
-          `INSERT INTO gallery_images (title, description, image_url, is_active, sort_order) 
-           VALUES (?, ?, ?, ?, ?)`,
-          [image.title, image.description, image.image_url, true, image.sort_order]
-        );
+        db.prepare(
+          `INSERT INTO gallery_images (title, description, image_url, is_active, sort_order)
+           VALUES (?, ?, ?, ?, ?)`
+        ).run(image.title, image.description, image.image_url, 1, image.sort_order);
       }
 
       console.log(`✓ ${sampleImages.length} sample gallery images created`);

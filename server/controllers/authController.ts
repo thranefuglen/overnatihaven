@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { authService } from '../services/authService';
-import { loginSchema, createAdminUserSchema } from '../types';
+import { createAdminUserSchema } from '../types';
 import { logger } from '../config/logger';
 
 /**

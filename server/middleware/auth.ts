@@ -55,7 +55,7 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
 /**
  * Optional authentication - doesn't fail if no token provided
  */
-export function optionalAuth(req: Request, res: Response, next: NextFunction): void {
+export function optionalAuth(req: Request, _res: Response, next: NextFunction): void {
   try {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
