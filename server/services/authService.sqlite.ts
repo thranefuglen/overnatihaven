@@ -1,12 +1,12 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { queryOne, execute } from '../db/database.postgres';
+import { getDatabase } from '../db/database';
 import { config } from '../config/env';
 import { logger } from '../config/logger';
 import { AdminUser, LoginInput, AuthResponse } from '../types';
 
 /**
- * Authentication service for handling JWT tokens and password hashing (Postgres version)
+ * Authentication service for handling JWT tokens and password hashing
  */
 export class AuthService {
   /**
@@ -57,13 +57,13 @@ export class AuthService {
    */
   async login(credentials: LoginInput): Promise<AuthResponse> {
     const { username, password } = credentials;
+    const db = getDatabase();
 
     try {
-      // Find user by username (Postgres version)
-      const user = await queryOne<AdminUser>(
-        'SELECT id, username, email, password_hash FROM admin_users WHERE username = $1',
-        [username]
-      );
+      // Find user by username (SQLite version)
+      const user = db.prepare(
+        'SELECT id, username, email, password_hash FROM admin_users WHERE username = ?'
+      ).get(username) as AdminUser | undefined;
 
       if (!user) {
         throw new Error('Invalid credentials');
@@ -103,11 +103,11 @@ export class AuthService {
    * Get user by ID
    */
   async getUserById(userId: number): Promise<AdminUser | null> {
+    const db = getDatabase();
     try {
-      const user = await queryOne<AdminUser>(
-        'SELECT id, username FROM admin_users WHERE id = $1',
-        [userId]
-      );
+      const user = db.prepare(
+        'SELECT id, username FROM admin_users WHERE id = ?'
+      ).get(userId) as AdminUser | undefined;
 
       return user || null;
     } catch (error) {
@@ -123,14 +123,14 @@ export class AuthService {
    * Create new admin user
    */
   async createUser(userData: { username: string; password: string }): Promise<AdminUser> {
+    const db = getDatabase();
     try {
       const { username, password } = userData;
 
       // Check if user already exists
-      const existingUser = await queryOne<{ id: number }>(
-        'SELECT id FROM admin_users WHERE username = $1',
-        [username]
-      );
+      const existingUser = db.prepare(
+        'SELECT id FROM admin_users WHERE username = ?'
+      ).get(username);
 
       if (existingUser) {
         throw new Error('User with this username already exists');
@@ -140,16 +140,11 @@ export class AuthService {
       const passwordHash = await this.hashPassword(password);
 
       // Create user
-      const result = await queryOne<{ id: number }>(
-        'INSERT INTO admin_users (username, password_hash) VALUES ($1, $2) RETURNING id',
-        [username, passwordHash]
-      );
+      const result = db.prepare(
+        'INSERT INTO admin_users (username, password_hash) VALUES (?, ?)'
+      ).run(username, passwordHash);
 
-      if (!result) {
-        throw new Error('Failed to create user');
-      }
-
-      const userId = result.id;
+      const userId = result.lastInsertRowid as number;
 
       // Fetch created user
       const user = await this.getUserById(userId);
