@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .response {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gallery API Test</h1>
+    
+    <!-- Authentication Section -->
+    <div class="test-section">
+        <h3>Authentication</h3>
+        <div class="form-group">
+            <label>Username:</label>
+            <input type="text" id="username" value="admin">
+        </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="password" value="admin123">
+        </div>
+        <button onclick="login()">Login</button>
+        <button onclick="getCurrentUser()">Get Current User</button>
+        <button onclick="logout()">Logout</button>
+        <div id="authResponse" class="response"></div>
+    </div>
+
+    <!-- Gallery Public Section -->
+    <div class="test-section">
+        <h3>Public Gallery</h3>
+        <button onclick="getActiveImages()">Get Active Images</button>
+        <div id="publicResponse" class="response"></div>
+    </div>
+
+    <!-- Gallery Admin Section -->
+    <div class="test-section">
+        <h3>Admin Gallery (Requires Authentication)</h3>
+        <div class="form-group">
+            <label>Title:</label>
+            <input type="text" id="imageTitle" placeholder="Image title">
+        </div>
+        <div class="form-group">
+            <label>Description:</label>
+            <textarea id="imageDescription" placeholder="Image description" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Image URL:</label>
+            <input type="text" id="imageUrl" placeholder="https://example.com/image.jpg">
+        </div>
+        <button onclick="getAllImages()">Get All Images</button>
+        <button onclick="createImage()">Create Image</button>
+        <button onclick="updateImage()">Update Image (ID: 1)</button>
+        <button onclick="deleteImage()">Delete Image (ID: 1)</button>
+        <button onclick="toggleImageStatus()">Toggle Status (ID: 1)</button>
+        <button onclick="reorderImages()">Reorder Images</button>
+        <div id="adminResponse" class="response"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        let authToken = localStorage.getItem('authToken') || '';
+
+        // Utility function to make API calls
+        async function apiCall(endpoint, options = {}) {
+            const url = `${API_BASE}${endpoint}`;
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(authToken && { Authorization: `Bearer ${authToken}` }),
+                },
+                ...options,
+            };
+
+            try {
+                const response = await fetch(url, config);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || `HTTP error! status: ${response.status}`);
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+
+        // Display response
+        function displayResponse(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.className = `response ${isError ? 'error' : 'success'}`;
+            element.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Authentication functions
+        async function login() {
+            try {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                const response = await apiCall('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, password }),
+                });
+                
+                authToken = response.token;
+                localStorage.setItem('authToken', authToken);
+                
+                displayResponse('authResponse', response);
+            } catch (error) {
+                displayResponse('authResponse', { error: error.message }, true);
+            }
+        }
+
+        async function getCurrentUser() {
+            try {
+                const response = await apiCall('/auth/me');
+                displayResponse('authResponse', response);
+            } catch (error) {
+                displayResponse('authResponse', { error: error.message }, true);
+            }
+        }
+
+        async function logout() {
+            try {
+                await apiCall('/auth/logout', { method: 'POST' });
+                authToken = '';
+                localStorage.removeItem('authToken');
+                displayResponse('authResponse', { message: 'Logged out successfully' });
+            } catch (error) {
+                displayResponse('authResponse', { error: error.message }, true);
+            }
+        }
+
+        // Gallery functions
+        async function getActiveImages() {
+            try {
+                const response = await apiCall('/gallery');
+                displayResponse('publicResponse', response);
+            } catch (error) {
+                displayResponse('publicResponse', { error: error.message }, true);
+            }
+        }
+
+        async function getAllImages() {
+            try {
+                const response = await apiCall('/gallery/admin');
+                displayResponse('adminResponse', response);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        async function createImage() {
+            try {
+                const title = document.getElementById('imageTitle').value;
+                const description = document.getElementById('imageDescription').value;
+                const image_url = document.getElementById('imageUrl').value;
+                
+                const response = await apiCall('/gallery/admin', {
+                    method: 'POST',
+                    body: JSON.stringify({ title, description, image_url }),
+                });
+                
+                displayResponse('adminResponse', response);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        async function updateImage() {
+            try {
+                const title = document.getElementById('imageTitle').value;
+                const description = document.getElementById('imageDescription').value;
+                const image_url = document.getElementById('imageUrl').value;
+                
+                const response = await apiCall('/gallery/admin/1', {
+                    method: 'PUT',
+                    body: JSON.stringify({ title, description, image_url }),
+                });
+                
+                displayResponse('adminResponse', response);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        async function deleteImage() {
+            try {
+                const response = await apiCall('/gallery/admin/1', {
+                    method: 'DELETE',
+                });
+                
+                displayResponse('adminResponse', response);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        async function toggleImageStatus() {
+            try {
+                const response = await apiCall('/gallery/admin/1/toggle', {
+                    method: 'PUT',
+                });
+                
+                displayResponse('adminResponse', response);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        async function reorderImages() {
+            try {
+                const response = await apiCall('/gallery/admin/reorder', {
+                    method: 'PUT',
+                    body: JSON.stringify({ imageIds: [2, 1, 3, 4] }),
+                });
+                
+                displayResponse('adminResponse', response);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        // Auto-load active images on page load
+        window.addEventListener('load', () => {
+            getActiveImages();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/server",
+    "rootDir": "./server",
+    "module": "commonjs",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "moduleResolution": "node",
+    "types": ["node"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["server/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}
