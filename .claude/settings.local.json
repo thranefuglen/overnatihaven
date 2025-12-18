@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(tasklist:*)",
+      "Bash(dir:*)",
+      "Bash(curl:*)",
+      "Bash(npm run dev:backend:*)",
+      "Bash(timeout /t 3)",
+      "Bash(npm rebuild:*)",
+      "Bash(mkdir:*)",
+      "Bash(node -e:*)",
+      "Bash(cat:*)",
+      "Bash(node test-schema-parse.js:*)",
+      "Bash(node:*)",
+      "Bash(sqlite3:*)",
+      "Bash(taskkill /F /PID 7696)",
+      "Bash(cmd.exe /c \"taskkill /F /PID 7696\")",
+      "Bash(npx kill-port:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
