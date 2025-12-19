@@ -1,10 +1,10 @@
 const Pricing = () => {
   return (
-    <section id="pricing" className="bg-gray-50">
+    <section id="pricing" className="bg-gray-50 dark:bg-gray-800 transition-colors">
       <div className="section-container">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Priser</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Priser</h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Enkle og overkommelige priser for cykelturister
           </p>
         </div>
@@ -13,8 +13,8 @@ const Pricing = () => {
           {/* Single Night */}
           <div className="card hover:scale-105 transition-transform duration-300">
             <div className="p-8">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mb-6 mx-auto">
+                <svg className="w-8 h-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -23,56 +23,56 @@ const Pricing = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 text-center mb-2">Enkelt Overnatning</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-2">Enkelt Overnatning</h3>
               <div className="text-center mb-6">
-                <span className="text-5xl font-bold text-primary-600">150</span>
-                <span className="text-2xl text-gray-600"> kr.</span>
-                <p className="text-gray-500 mt-2">per person / nat</p>
+                <span className="text-5xl font-bold text-primary-600 dark:text-primary-400">150</span>
+                <span className="text-2xl text-gray-600 dark:text-gray-300"> kr.</span>
+                <p className="text-gray-500 dark:text-gray-400 mt-2">per person / nat</p>
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start">
                   <svg
-                    className="w-5 h-5 text-primary-600 mr-3 flex-shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">Teltplads i haven</span>
+                  <span className="text-gray-700 dark:text-gray-300">Teltplads i haven</span>
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-5 h-5 text-primary-600 mr-3 flex-shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">Adgang til faciliteter</span>
+                  <span className="text-gray-700 dark:text-gray-300">Adgang til faciliteter</span>
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-5 h-5 text-primary-600 mr-3 flex-shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">WiFi inkluderet</span>
+                  <span className="text-gray-700 dark:text-gray-300">WiFi inkluderet</span>
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-5 h-5 text-primary-600 mr-3 flex-shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">Cykelopbevaring</span>
+                  <span className="text-gray-700 dark:text-gray-300">Cykelopbevaring</span>
                 </li>
               </ul>
             </div>
@@ -86,8 +86,8 @@ const Pricing = () => {
               </span>
             </div>
             <div className="p-8">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mb-6 mx-auto">
+                <svg className="w-8 h-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -96,45 +96,45 @@ const Pricing = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 text-center mb-2">2-3 Nætter</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-2">2-3 Nætter</h3>
               <div className="text-center mb-6">
-                <span className="text-5xl font-bold text-primary-600">400</span>
-                <span className="text-2xl text-gray-600"> kr.</span>
-                <p className="text-gray-500 mt-2">per person / 3 nætter</p>
+                <span className="text-5xl font-bold text-primary-600 dark:text-primary-400">400</span>
+                <span className="text-2xl text-gray-600 dark:text-gray-300"> kr.</span>
+                <p className="text-gray-500 dark:text-gray-400 mt-2">per person / 3 nætter</p>
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start">
                   <svg
-                    className="w-5 h-5 text-primary-600 mr-3 flex-shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">Alt fra enkelt overnatning</span>
+                  <span className="text-gray-700 dark:text-gray-300">Alt fra enkelt overnatning</span>
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-5 h-5 text-primary-600 mr-3 flex-shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">Udvidet køkkenadgang</span>
+                  <span className="text-gray-700 dark:text-gray-300">Udvidet køkkenadgang</span>
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-5 h-5 text-primary-600 mr-3 flex-shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">Fleksible check-in tider</span>
+                  <span className="text-gray-700 dark:text-gray-300">Fleksible check-in tider</span>
                 </li>
                 <li className="flex items-start">
                   <svg
@@ -154,8 +154,8 @@ const Pricing = () => {
           {/* Weekly Stay */}
           <div className="card hover:scale-105 transition-transform duration-300">
             <div className="p-8">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mb-6 mx-auto">
+                <svg className="w-8 h-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -164,45 +164,45 @@ const Pricing = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 text-center mb-2">Ugentlig Ophold</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-2">Ugentlig Ophold</h3>
               <div className="text-center mb-6">
-                <span className="text-5xl font-bold text-primary-600">900</span>
-                <span className="text-2xl text-gray-600"> kr.</span>
-                <p className="text-gray-500 mt-2">per person / uge</p>
+                <span className="text-5xl font-bold text-primary-600 dark:text-primary-400">900</span>
+                <span className="text-2xl text-gray-600 dark:text-gray-300"> kr.</span>
+                <p className="text-gray-500 dark:text-gray-400 mt-2">per person / uge</p>
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start">
                   <svg
-                    className="w-5 h-5 text-primary-600 mr-3 flex-shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">Alt fra tidligere pakker</span>
+                  <span className="text-gray-700 dark:text-gray-300">Alt fra tidligere pakker</span>
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-5 h-5 text-primary-600 mr-3 flex-shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">Fuld køkkenadgang</span>
+                  <span className="text-gray-700 dark:text-gray-300">Fuld køkkenadgang</span>
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-5 h-5 text-primary-600 mr-3 flex-shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">Vaskerimuligheder</span>
+                  <span className="text-gray-700 dark:text-gray-300">Vaskerimuligheder</span>
                 </li>
                 <li className="flex items-start">
                   <svg
@@ -222,24 +222,24 @@ const Pricing = () => {
 
         {/* Additional Info */}
         <div className="mt-16 text-center">
-          <div className="bg-white rounded-2xl p-8 max-w-3xl mx-auto shadow-md">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Ekstra Information</h3>
+          <div className="bg-white dark:bg-gray-700 rounded-2xl p-8 max-w-3xl mx-auto shadow-md">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Ekstra Information</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left">
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Betaling</h4>
-                <p className="text-gray-600">Kontant eller MobilePay accepteres</p>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Betaling</h4>
+                <p className="text-gray-600 dark:text-gray-300">Kontant eller MobilePay accepteres</p>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Afbestilling</h4>
-                <p className="text-gray-600">Gratis op til 24 timer før ankomst</p>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Afbestilling</h4>
+                <p className="text-gray-600 dark:text-gray-300">Gratis op til 24 timer før ankomst</p>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Børn under 12 år</h4>
-                <p className="text-gray-600">50% rabat på alle priser</p>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Børn under 12 år</h4>
+                <p className="text-gray-600 dark:text-gray-300">50% rabat på alle priser</p>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Grupper (5+ personer)</h4>
-                <p className="text-gray-600">Kontakt for specialpris</p>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Grupper (5+ personer)</h4>
+                <p className="text-gray-600 dark:text-gray-300">Kontakt for specialpris</p>
               </div>
             </div>
           </div>

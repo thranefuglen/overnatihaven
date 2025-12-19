@@ -3,21 +3,21 @@ import LocationMap from './LocationMap'
 const Contact = () => {
 
   return (
-    <section id="contact" className="bg-white">
+    <section id="contact" className="bg-white dark:bg-gray-900 transition-colors">
       <div className="section-container">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Kontakt Elin</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Kontakt Elin</h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Har du spørgsmål eller vil du gerne booke? Kontakt mig direkte på telefon eller email
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto">
           {/* Call to Action Box */}
-          <div className="bg-primary-50 border-2 border-primary-200 rounded-2xl p-8 mb-12 text-center">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Klar til at booke?</h3>
-            <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
-              Ring eller skriv til Elin for at høre om ledige pladser og booke din overnatning. 
+          <div className="bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-200 dark:border-primary-700 rounded-2xl p-8 mb-12 text-center">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Klar til at booke?</h3>
+            <p className="text-gray-700 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
+              Ring eller skriv til Elin for at høre om ledige pladser og booke din overnatning.
               Jeg svarer normalt inden for få timer.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

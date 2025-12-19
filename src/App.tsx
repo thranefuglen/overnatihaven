@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminLayout from './components/AdminLayout'
 import Login from './components/Login'
@@ -18,25 +19,27 @@ import Footer from './components/Footer'
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/*" element={<PublicApp />} />
-          
-          {/* Admin routes */}
-          <Route path="/admin/login" element={<Login />} />
-          <Route
-            path="/admin/*"
-            element={
-              <ProtectedRoute>
-                <AdminRoutes />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </Router>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/*" element={<PublicApp />} />
+
+            {/* Admin routes */}
+            <Route path="/admin/login" element={<Login />} />
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute>
+                  <AdminRoutes />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 
@@ -45,7 +48,7 @@ const PublicApp: React.FC = () => {
   const [currentSection, setCurrentSection] = React.useState('home')
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
       <Header currentSection={currentSection} setCurrentSection={setCurrentSection} />
       <main>
         <Hero />

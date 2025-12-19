@@ -115,11 +115,11 @@ const Facilities = () => {
   ]
 
   return (
-    <section id="facilities" className="bg-gray-50">
+    <section id="facilities" className="bg-gray-50 dark:bg-gray-900 transition-colors">
       <div className="section-container">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Faciliteter</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Faciliteter</h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Alt hvad du behøver for en behagelig overnatning efter en lang cykeltur
           </p>
         </div>
@@ -130,24 +130,24 @@ const Facilities = () => {
               key={index}
               className="card p-6 hover:scale-105 transition-transform duration-300"
             >
-              <div className="w-16 h-16 bg-primary-100 rounded-lg flex items-center justify-center mb-4 text-primary-600">
+              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mb-4 text-primary-600 dark:text-primary-400">
                 {facility.icon}
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{facility.title}</h3>
-              <p className="text-gray-600">{facility.description}</p>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{facility.title}</h3>
+              <p className="text-gray-600 dark:text-gray-300">{facility.description}</p>
             </div>
           ))}
         </div>
 
         {/* Additional Info */}
-        <div className="mt-16 bg-primary-50 rounded-2xl p-8 md:p-12">
+        <div className="mt-16 bg-primary-50 dark:bg-primary-900/20 rounded-2xl p-8 md:p-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Praktiske Oplysninger</h3>
-              <ul className="space-y-3 text-gray-700">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Praktiske Oplysninger</h3>
+              <ul className="space-y-3 text-gray-700 dark:text-gray-300">
                 <li className="flex items-start">
                   <svg
-                    className="w-6 h-6 text-primary-600 mr-3 flex-shrink-0"
+                    className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -158,7 +158,7 @@ const Facilities = () => {
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-6 h-6 text-primary-600 mr-3 flex-shrink-0"
+                    className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -169,7 +169,7 @@ const Facilities = () => {
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-6 h-6 text-primary-600 mr-3 flex-shrink-0"
+                    className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -180,7 +180,7 @@ const Facilities = () => {
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-6 h-6 text-primary-600 mr-3 flex-shrink-0"
+                    className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -192,11 +192,11 @@ const Facilities = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Husregler</h3>
-              <ul className="space-y-3 text-gray-700">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Husregler</h3>
+              <ul className="space-y-3 text-gray-700 dark:text-gray-300">
                 <li className="flex items-start">
                   <svg
-                    className="w-6 h-6 text-primary-600 mr-3 flex-shrink-0"
+                    className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -207,7 +207,7 @@ const Facilities = () => {
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-6 h-6 text-primary-600 mr-3 flex-shrink-0"
+                    className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -218,7 +218,7 @@ const Facilities = () => {
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-6 h-6 text-primary-600 mr-3 flex-shrink-0"
+                    className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -229,7 +229,7 @@ const Facilities = () => {
                 </li>
                 <li className="flex items-start">
                   <svg
-                    className="w-6 h-6 text-primary-600 mr-3 flex-shrink-0"
+                    className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
