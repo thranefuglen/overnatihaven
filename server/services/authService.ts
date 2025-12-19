@@ -1,6 +1,6 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { queryOne, execute } from '../db/database.postgres';
+import { queryOne } from '../db/database.postgres';
 import { config } from '../config/env';
 import { logger } from '../config/logger';
 import { AdminUser, LoginInput, AuthResponse } from '../types';
