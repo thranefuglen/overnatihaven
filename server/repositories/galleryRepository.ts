@@ -2,7 +2,7 @@ import { query, queryOne, execute } from '../db/database.postgres';
 import { GalleryImage, CreateGalleryImageInput, UpdateGalleryImageInput } from '../types';
 
 /**
- * Repository for gallery images database operations (Postgres version)
+ * Repository for gallery images database operations
  */
 export class GalleryRepository {
   /**

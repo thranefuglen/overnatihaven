@@ -1,4 +1,7 @@
+import { API_BASE_URL } from '../config/api'
+
 const Hero = () => {
+
   const scrollToContact = () => {
     const element = document.querySelector('#contact')
     if (element) {
@@ -15,7 +18,7 @@ const Hero = () => {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')",
+              `url('${API_BASE_URL}/uploads/gallery/616558711_1268700155074587_3384761009880758784_n.jpg')`,
           }}
         />
       </div>

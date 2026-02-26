@@ -1,16 +1,7 @@
 import { useState, useEffect } from 'react'
-
-interface GalleryImage {
-  id: number
-  title: string
-  description: string | null
-  image_url: string
-  file_path: string | null
-  is_active: boolean
-  sort_order: number
-  created_at: string
-  updated_at: string
-}
+import { API_URL } from '../config/api'
+import { GalleryImage } from '../types'
+import { galleryFallback } from '../data/galleryFallback'
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null)
@@ -18,16 +9,14 @@ const Gallery = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
-
   useEffect(() => {
     fetchImages()
   }, [])
 
   const fetchImages = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/gallery`)
-      
+      const response = await fetch(`${API_URL}/gallery`)
+
       if (!response.ok) {
         throw new Error('Failed to fetch images')
       }
@@ -37,81 +26,12 @@ const Gallery = () => {
       const activeImages = (data.data || [])
         .filter((img: GalleryImage) => img.is_active)
         .sort((a: GalleryImage, b: GalleryImage) => a.sort_order - b.sort_order)
-      
+
       setImages(activeImages)
     } catch (error) {
       console.error('Error fetching images:', error)
       setError('Kunne ikke hente billeder fra galleriet')
-      
-      // Fallback to static images if API fails
-      setImages([
-        {
-          id: 1,
-          title: 'Telt i naturskønne omgivelser',
-          description: null,
-          image_url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-          file_path: null,
-          is_active: true,
-          sort_order: 0,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 2,
-          title: 'Smuk solnedgang i haven',
-          description: null,
-          image_url: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-          file_path: null,
-          is_active: true,
-          sort_order: 1,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 3,
-          title: 'Cykler parkeret ved haven',
-          description: null,
-          image_url: 'https://images.unsplash.com/photo-1508873696983-2dfd5898f08b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-          file_path: null,
-          is_active: true,
-          sort_order: 2,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 4,
-          title: 'Morgenkaffe i det fri',
-          description: null,
-          image_url: 'https://images.unsplash.com/photo-1537905569824-f89f14cceb68?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-          file_path: null,
-          is_active: true,
-          sort_order: 3,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 5,
-          title: 'Blomster i haven',
-          description: null,
-          image_url: 'https://images.unsplash.com/photo-1445308394109-4ec2920981b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-          file_path: null,
-          is_active: true,
-          sort_order: 4,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 6,
-          title: 'Camping i naturen',
-          description: null,
-          image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-          file_path: null,
-          is_active: true,
-          sort_order: 5,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ])
+      setImages(galleryFallback)
     } finally {
       setIsLoading(false)
     }

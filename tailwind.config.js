@@ -15,10 +15,10 @@ export default {
           300: '#86efac',
           400: '#4ade80',
           500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
+          600: '#047857', // Endnu mørkere grøn for WCAG AA (emerald-700) - 4.5:1+ kontrast
+          700: '#065f46', // emerald-800
+          800: '#064e3b', // emerald-900
+          900: '#054f31', // Ekstra mørk grøn
         }
       },
       fontFamily: {

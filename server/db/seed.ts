@@ -44,28 +44,64 @@ export async function seedDatabase(): Promise<void> {
     if (imageCount === 0) {
       const sampleImages = [
         {
-          title: 'Campingplads ved søen',
-          description: 'Smuk beliggenhed ved vandet med plads til telte',
-          image_url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop',
+          title: 'Haven om sommeren',
+          description: 'Smuk beliggenhed med plads til telte',
+          image_url: '/uploads/gallery/616558711_1268700155074587_3384761009880758784_n.jpg',
           sort_order: 1,
         },
         {
-          title: 'Hyggelig bålplads',
-          description: 'Fælles bålplads til hyggelige aftener',
-          image_url: 'https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=800&h=600&fit=crop',
+          title: 'Naturskønne omgivelser',
+          description: 'Omgivet af grønne områder og natur',
+          image_url: '/uploads/gallery/617547163_1212805530349898_2661928358546701939_n.jpg',
           sort_order: 2,
         },
         {
-          title: 'Natur og frisk luft',
-          description: 'Omgivet af smuk natur og grønne områder',
-          image_url: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=800&h=600&fit=crop',
+          title: 'Blomstrende have',
+          description: 'Smukke blomster i haven',
+          image_url: '/uploads/gallery/621844054_901536649085318_8093853759389452189_n.jpg',
           sort_order: 3,
         },
         {
-          title: 'Faciliteter',
-          description: 'Rene og moderne faciliteter for gæster',
-          image_url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop',
+          title: 'Haven set fra terrassen',
+          description: 'Udsigt over haven',
+          image_url: '/uploads/gallery/621795998_2603028566757679_7637224078746343336_n.jpg',
           sort_order: 4,
+        },
+        {
+          title: 'Grønne områder',
+          description: 'Fredelige områder til afslapning',
+          image_url: '/uploads/gallery/621129142_1414389603476299_5574062650380999838_n.jpg',
+          sort_order: 5,
+        },
+        {
+          title: 'Hyggelig atmosfære',
+          description: 'Velkommen til haven',
+          image_url: '/uploads/gallery/618622088_1586836882208984_8164567257434768372_n.jpg',
+          sort_order: 6,
+        },
+        {
+          title: 'Haven i solskin',
+          description: 'Smuk dag i haven',
+          image_url: '/uploads/gallery/617602750_2066337447486631_2945107752441500504_n.jpg',
+          sort_order: 7,
+        },
+        {
+          title: 'Naturlige omgivelser',
+          description: 'Naturskøn beliggenhed',
+          image_url: '/uploads/gallery/622259576_3146862288834567_8857659111211895017_n.jpg',
+          sort_order: 8,
+        },
+        {
+          title: 'Fredelig have',
+          description: 'Rolig og fredelig atmosfære',
+          image_url: '/uploads/gallery/620161908_857300110453859_5686457950548681746_n.jpg',
+          sort_order: 9,
+        },
+        {
+          title: 'Haveudsigt',
+          description: 'Smukt udsyn over haven',
+          image_url: '/uploads/gallery/IMG_5357.JPEG',
+          sort_order: 10,
         },
       ];
 

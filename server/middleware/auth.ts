@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { MockAuthService } from '../services/mockService';
+import { authService } from '../services/authService';
 import { logger } from '../config/logger';
 
 /**
@@ -30,8 +30,8 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
       return;
     }
 
-      const decoded = MockAuthService.verifyToken(token);
-    
+    const decoded = authService.verifyToken(token);
+
     // Add user info to request
     req.user = {
       id: decoded.userId,
@@ -40,11 +40,11 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
 
     next();
   } catch (error) {
-    logger.warn('Authentication failed', { 
+    logger.warn('Authentication failed', {
       error: (error as Error).message,
-      headers: req.headers 
+      headers: req.headers
     });
-    
+
     res.status(403).json({
       success: false,
       message: 'Ugyldig eller udløbet token',
@@ -61,7 +61,7 @@ export function optionalAuth(req: Request, _res: Response, next: NextFunction): 
     const token = authHeader && authHeader.split(' ')[1];
 
     if (token) {
-    const decoded = MockAuthService.verifyToken(token);
+      const decoded = authService.verifyToken(token);
       req.user = {
         id: decoded.userId,
         username: decoded.username,
