@@ -26,7 +26,16 @@
       "Bash(git checkout:*)",
       "Bash(copy galleryRepository.ts galleryRepository.sqlite.ts)",
       "Bash(copy inquiryRepository.ts inquiryRepository.sqlite.ts)",
-      "Bash(copy contactRepository.ts contactRepository.sqlite.ts)"
+      "Bash(copy contactRepository.ts contactRepository.sqlite.ts)",
+      "Bash(git pull:*)",
+      "Bash(git merge:*)",
+      "Bash(git stash:*)",
+      "Bash(git restore:*)",
+      "Bash(npm run dev:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_click"
     ],
     "deny": [],
     "ask": []
