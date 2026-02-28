@@ -21,6 +21,7 @@ CREATE INDEX IF NOT EXISTS idx_gallery_images_created_at ON gallery_images(creat
 CREATE TABLE IF NOT EXISTS admin_users (
     id SERIAL PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
+    email TEXT,
     password_hash TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

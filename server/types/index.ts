@@ -66,8 +66,8 @@ export const createGalleryImageSchema = z.object({
   description: z.string().max(1000, 'Beskrivelse må max være 1000 tegn').optional(),
   image_url: z.string().optional(),
   file_path: z.string().optional(),
-  is_active: z.boolean().default(true),
-  sort_order: z.number().int().min(0, 'Sort order skal være positiv').default(0),
+  is_active: z.preprocess(val => val === 'true' || val === true, z.boolean()).default(true),
+  sort_order: z.preprocess(val => val === '' || val == null ? 0 : Number(val), z.number().int().min(0)).default(0),
 });
 
 export const updateGalleryImageSchema = createGalleryImageSchema.partial();

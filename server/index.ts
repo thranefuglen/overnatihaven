@@ -1,26 +1,14 @@
 import { createApp } from './app';
 import { config } from './config/env';
 import { logger } from './config/logger';
-import { initDatabase, closeDatabase } from './db/database';
-import { runMigrations } from './db/migrate';
 
 /**
  * Start the server
  */
 async function start() {
   try {
-    // Initialize database
-    logger.info('Initializing database...');
-    initDatabase();
-    
-    // Run migrations
-    logger.info('Running database migrations...');
-    runMigrations();
-
-    // Create Express app
     const app = createApp();
 
-    // Start server
     const server = app.listen(config.port, () => {
       logger.info(`Server started successfully`, {
         port: config.port,
@@ -31,18 +19,12 @@ async function start() {
       logger.info(`Health check: http://localhost:${config.port}/api/health`);
     });
 
-    // Graceful shutdown
     const shutdown = (signal: string) => {
       logger.info(`${signal} received. Starting graceful shutdown...`);
-      
       server.close(() => {
         logger.info('HTTP server closed');
-        closeDatabase();
-        logger.info('Database connection closed');
         process.exit(0);
       });
-
-      // Force shutdown after 10 seconds
       setTimeout(() => {
         logger.error('Forced shutdown after timeout');
         process.exit(1);
@@ -58,5 +40,4 @@ async function start() {
   }
 }
 
-// Start the application
 start();
