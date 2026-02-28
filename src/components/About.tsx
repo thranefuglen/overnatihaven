@@ -78,8 +78,8 @@ const About = () => {
           <div className="relative">
             <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1558904541-efa843a96f01?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                alt="Smuk have med telt"
+                src="https://ihslrztuzx2mtoua.public.blob.vercel-storage.com/gallery/1772288751470-le96is.jpeg"
+                alt="Udsigt over haven"
                 className="w-full h-full object-cover"
               />
             </div>
