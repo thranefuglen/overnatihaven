@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { API_URL } from '../config/api'
 
 interface Inquiry {
   id: number
@@ -21,7 +22,6 @@ const InquiriesAdmin: React.FC = () => {
   const [error, setError] = useState('')
   const { token } = useAuth()
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
   useEffect(() => {
     fetchInquiries()
@@ -29,7 +29,7 @@ const InquiriesAdmin: React.FC = () => {
 
   const fetchInquiries = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/inquiries`, {
+      const response = await fetch(`${API_URL}/inquiries`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -51,7 +51,7 @@ const InquiriesAdmin: React.FC = () => {
 
   const handleStatusUpdate = async (id: number, status: Inquiry['status']) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/inquiries/${id}`, {
+      const response = await fetch(`${API_URL}/inquiries/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

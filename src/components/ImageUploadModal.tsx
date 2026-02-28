@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { API_URL } from '../config/api'
 
 interface ImageUploadModalProps {
   onClose: () => void
@@ -18,7 +19,6 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({ onClose, onSuccess 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { token } = useAuth()
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -101,7 +101,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({ onClose, onSuccess 
         setIsLoading(false)
       })
 
-      xhr.open('POST', `${API_BASE_URL}/gallery/admin`)
+      xhr.open('POST', `${API_URL}/gallery/admin`)
       xhr.setRequestHeader('Authorization', `Bearer ${token}`)
       xhr.send(formData)
     } catch (error) {

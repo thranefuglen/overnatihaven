@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { API_URL } from '../config/api'
 
 interface GalleryImage {
   id: number
@@ -28,7 +29,6 @@ const ImageEditModal: React.FC<ImageEditModalProps> = ({ image, onClose, onSucce
   const [error, setError] = useState('')
   const { token } = useAuth()
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,7 +36,7 @@ const ImageEditModal: React.FC<ImageEditModalProps> = ({ image, onClose, onSucce
     setIsLoading(true)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/gallery/admin/${image.id}`, {
+      const response = await fetch(`${API_URL}/gallery/admin/${image.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

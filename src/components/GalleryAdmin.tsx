@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { API_URL } from '../config/api'
 
 interface GalleryImage {
   id: number
@@ -23,7 +24,6 @@ const GalleryAdmin: React.FC = () => {
   const [draggedItem, setDraggedItem] = useState<number | null>(null)
   const { token } = useAuth()
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
   useEffect(() => {
     fetchImages()
@@ -31,7 +31,7 @@ const GalleryAdmin: React.FC = () => {
 
   const fetchImages = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/gallery/admin`, {
+      const response = await fetch(`${API_URL}/gallery/admin`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -57,7 +57,7 @@ const GalleryAdmin: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/gallery/admin/${id}`, {
+      const response = await fetch(`${API_URL}/gallery/admin/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -77,7 +77,7 @@ const GalleryAdmin: React.FC = () => {
 
   const handleToggleActive = async (id: number, isActive: boolean) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/gallery/admin/${id}`, {
+      const response = await fetch(`${API_URL}/gallery/admin/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ const GalleryAdmin: React.FC = () => {
     setImages(reorderedImages)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/gallery/admin/reorder`, {
+      const response = await fetch(`${API_URL}/gallery/admin/reorder`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

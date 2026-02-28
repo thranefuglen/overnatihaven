@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { API_URL } from '../config/api'
 
 interface Contact {
   id: number
@@ -17,7 +18,6 @@ const ContactsAdmin: React.FC = () => {
   const [error, setError] = useState('')
   const { token } = useAuth()
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
   useEffect(() => {
     fetchContacts()
@@ -25,7 +25,7 @@ const ContactsAdmin: React.FC = () => {
 
   const fetchContacts = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/contacts`, {
+      const response = await fetch(`${API_URL}/contacts`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -47,7 +47,7 @@ const ContactsAdmin: React.FC = () => {
 
   const handleMarkAsRead = async (id: number) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/contacts/${id}`, {
+      const response = await fetch(`${API_URL}/contacts/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ const ContactsAdmin: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/contacts/${id}`, {
+      const response = await fetch(`${API_URL}/contacts/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
