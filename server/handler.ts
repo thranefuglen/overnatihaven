@@ -3,10 +3,10 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import inquiryRoutes from '../server/routes/inquiryRoutes';
-import contactRoutes from '../server/routes/contactRoutes';
-import galleryRoutes from '../server/routes/galleryRoutes';
-import authRoutes from '../server/routes/authRoutes';
+import inquiryRoutes from './routes/inquiryRoutes';
+import contactRoutes from './routes/contactRoutes';
+import galleryRoutes from './routes/galleryRoutes';
+import authRoutes from './routes/authRoutes';
 
 const app = express();
 

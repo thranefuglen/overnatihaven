@@ -4,6 +4,7 @@ node_modules/
 # Build output
 dist/
 dist-frontend/
+api/index.js
 
 # Environment variables
 .env
