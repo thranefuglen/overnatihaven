@@ -15,6 +15,24 @@ En hjemmeside og API til Elins overnatningshave, hvor cyklister kan booke overna
 | Email | Nodemailer |
 | Logging | Winston |
 
+## Lokal udvikling
+
+```bash
+# 1. Installér afhængigheder
+npm install
+
+# 2. Kopiér eksempel-konfiguration og udfyld CHANGE_ME-værdier
+cp .env.local.example .env.local
+
+# 3. Start frontend og backend samtidig
+npm run dev:full
+```
+
+- Frontend tilgængeligt på `http://localhost:5173`
+- API tilgængeligt på `http://localhost:3000/api`
+- Vite proxy videresender `/api/*` forespørgsler til backend automatisk
+- Billedupload gemmes i `/tmp/uploads/` lokalt (ingen Vercel Blob token nødvendig)
+
 ## Hurtig Start
 
 ```bash

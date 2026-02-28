@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import { galleryRepository } from '../repositories/galleryRepository';
+import { uploadToBlob } from '../middleware/upload';
 
-import { 
-  createGalleryImageSchema, 
-  updateGalleryImageSchema, 
-  reorderGallerySchema 
+import {
+  createGalleryImageSchema,
+  updateGalleryImageSchema,
+  reorderGallerySchema
 } from '../types';
 import { logger } from '../config/logger';
 
@@ -108,17 +109,17 @@ export class GalleryController {
   async createImage(req: Request, res: Response): Promise<void> {
     try {
       const validatedData = createGalleryImageSchema.parse(req.body);
-      
-      // Add file path if file was uploaded
+
+      // Upload file to blob storage if provided
       if (req.file) {
-        validatedData.file_path = req.file.path;
-        validatedData.image_url = `/uploads/gallery/${req.file.filename}`;
+        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname, req.file.mimetype);
+        validatedData.image_url = blobUrl;
       }
 
       const image = await galleryRepository.createImage({
         title: validatedData.title,
         description: validatedData.description,
-        image_url: validatedData.image_url || `/uploads/gallery/${req.file?.filename}`,
+        image_url: validatedData.image_url || '',
         sort_order: validatedData.sort_order || 0,
         is_active: true
       });
@@ -157,11 +158,11 @@ export class GalleryController {
       }
 
       const validatedData = updateGalleryImageSchema.parse(req.body);
-      
-      // Add file path if file was uploaded
+
+      // Upload file to blob storage if provided
       if (req.file) {
-        validatedData.file_path = req.file.path;
-        validatedData.image_url = `/uploads/gallery/${req.file.filename}`;
+        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname, req.file.mimetype);
+        validatedData.image_url = blobUrl;
       }
 
       const image = await galleryRepository.updateImage(id, validatedData);

@@ -2,7 +2,6 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import path from 'path';
 import { config } from './config/env';
 import { logger } from './config/logger';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -70,8 +69,10 @@ export function createApp(): Application {
   // API routes
   app.use('/api', routes);
 
-  // Static file serving for uploaded files
-  app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+  // Local dev fallback: serve /tmp/uploads/ under /tmp-uploads/ when blob storage is not configured
+  if (!config.blob.readWriteToken) {
+    app.use('/tmp-uploads', express.static('/tmp/uploads'));
+  }
 
   // 404 handler
   app.use(notFoundHandler);

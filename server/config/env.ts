@@ -41,7 +41,11 @@ export const config = {
   upload: {
     maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '5242880', 10), // 5MB
     allowedTypes: (process.env.ALLOWED_FILE_TYPES || 'image/jpeg,image/jpg,image/png,image/webp').split(','),
-    uploadDir: process.env.UPLOAD_DIR || './uploads/gallery',
+  },
+
+  // Vercel Blob Storage
+  blob: {
+    readWriteToken: process.env.BLOB_READ_WRITE_TOKEN || '',
   },
 };
 
