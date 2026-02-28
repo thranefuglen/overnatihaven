@@ -230,6 +230,7 @@ var isProduction = config.nodeEnv === "production";
 // server/config/logger.ts
 var import_winston = __toESM(require("winston"));
 var import_path = __toESM(require("path"));
+var import_fs = __toESM(require("fs"));
 var logFormat = import_winston.default.format.combine(
   import_winston.default.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
   import_winston.default.format.errors({ stack: true }),
@@ -247,30 +248,32 @@ var consoleFormat = import_winston.default.format.combine(
     return msg;
   })
 );
+var transports = [
+  new import_winston.default.transports.Console({ format: consoleFormat })
+];
+if (isDevelopment) {
+  const logsDir = import_path.default.join(process.cwd(), "logs");
+  if (!import_fs.default.existsSync(logsDir)) {
+    import_fs.default.mkdirSync(logsDir, { recursive: true });
+  }
+  transports.push(
+    new import_winston.default.transports.File({
+      filename: import_path.default.join(logsDir, "error.log"),
+      level: "error",
+      maxsize: 5242880,
+      maxFiles: 5
+    }),
+    new import_winston.default.transports.File({
+      filename: import_path.default.join(logsDir, "combined.log"),
+      maxsize: 5242880,
+      maxFiles: 5
+    })
+  );
+}
 var logger = import_winston.default.createLogger({
   level: isDevelopment ? "debug" : "info",
   format: logFormat,
-  transports: [
-    // Console output
-    new import_winston.default.transports.Console({
-      format: consoleFormat
-    }),
-    // Error log file
-    new import_winston.default.transports.File({
-      filename: import_path.default.join("logs", "error.log"),
-      level: "error",
-      maxsize: 5242880,
-      // 5MB
-      maxFiles: 5
-    }),
-    // Combined log file
-    new import_winston.default.transports.File({
-      filename: import_path.default.join("logs", "combined.log"),
-      maxsize: 5242880,
-      // 5MB
-      maxFiles: 5
-    })
-  ]
+  transports
 });
 
 // server/services/emailService.ts
@@ -974,7 +977,7 @@ var galleryRepository = new GalleryRepository();
 // server/middleware/upload.ts
 var import_multer = __toESM(require("multer"));
 var import_path2 = __toESM(require("path"));
-var import_fs = __toESM(require("fs"));
+var import_fs2 = __toESM(require("fs"));
 var fileFilter = (_req, file, cb) => {
   const allowedTypes = config.upload.allowedTypes;
   const fileMime = file.mimetype.toLowerCase();
@@ -1008,11 +1011,11 @@ async function uploadToBlob(buffer, originalname, mimetype) {
     return blob.url;
   } else {
     const tmpDir = "/tmp/uploads";
-    if (!import_fs.default.existsSync(tmpDir)) {
-      import_fs.default.mkdirSync(tmpDir, { recursive: true });
+    if (!import_fs2.default.existsSync(tmpDir)) {
+      import_fs2.default.mkdirSync(tmpDir, { recursive: true });
     }
     const filePath = import_path2.default.join(tmpDir, filename);
-    import_fs.default.writeFileSync(filePath, buffer);
+    import_fs2.default.writeFileSync(filePath, buffer);
     logger.info("File saved to local /tmp fallback", { filePath });
     return `/tmp-uploads/${filename}`;
   }

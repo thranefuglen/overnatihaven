@@ -1,5 +1,6 @@
 import winston from 'winston';
 import path from 'path';
+import fs from 'fs';
 import { isDevelopment } from './env';
 
 const logFormat = winston.format.combine(
@@ -21,26 +22,33 @@ const consoleFormat = winston.format.combine(
   })
 );
 
+const transports: winston.transport[] = [
+  new winston.transports.Console({ format: consoleFormat }),
+];
+
+// File transports only in local dev — serverless has a read-only filesystem
+if (isDevelopment) {
+  const logsDir = path.join(process.cwd(), 'logs');
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+  }
+  transports.push(
+    new winston.transports.File({
+      filename: path.join(logsDir, 'error.log'),
+      level: 'error',
+      maxsize: 5242880,
+      maxFiles: 5,
+    }),
+    new winston.transports.File({
+      filename: path.join(logsDir, 'combined.log'),
+      maxsize: 5242880,
+      maxFiles: 5,
+    })
+  );
+}
+
 export const logger = winston.createLogger({
   level: isDevelopment ? 'debug' : 'info',
   format: logFormat,
-  transports: [
-    // Console output
-    new winston.transports.Console({
-      format: consoleFormat,
-    }),
-    // Error log file
-    new winston.transports.File({
-      filename: path.join('logs', 'error.log'),
-      level: 'error',
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
-    // Combined log file
-    new winston.transports.File({
-      filename: path.join('logs', 'combined.log'),
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
-  ],
+  transports,
 });
