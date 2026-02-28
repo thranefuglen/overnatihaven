@@ -2,10 +2,10 @@
   "compilerOptions": {
     "outDir": "./dist/server",
     "rootDir": "./server",
-    "module": "esnext",
+    "module": "CommonJS",
     "target": "ES2022",
     "lib": ["ES2022"],
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "types": ["node"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -17,5 +17,5 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["server/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "server/db/migrate.ts"]
 }
