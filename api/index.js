@@ -1691,6 +1691,7 @@ var authRoutes_default = router4;
 
 // server/handler.ts
 var app = (0, import_express5.default)();
+app.set("trust proxy", 1);
 app.use((0, import_helmet.default)({
   contentSecurityPolicy: false
 }));

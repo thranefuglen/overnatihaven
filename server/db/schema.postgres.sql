@@ -80,3 +80,6 @@ VALUES
     ('Faciliteter', 'Rene og velholdte faciliteter for gæster', 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop', 5, true),
     ('Natursti', 'Smuk natursti i nærheden af campingpladsen', 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop', 6, true)
 ON CONFLICT DO NOTHING;
+
+-- Ensure email column exists (added after initial deployment)
+ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS email TEXT;

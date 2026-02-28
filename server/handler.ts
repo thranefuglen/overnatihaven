@@ -10,6 +10,9 @@ import authRoutes from './routes/authRoutes';
 
 const app = express();
 
+// Trust Vercel's proxy so express-rate-limit can read the real client IP
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(helmet({
   contentSecurityPolicy: false,
