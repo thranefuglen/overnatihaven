@@ -3,10 +3,12 @@ node_modules/
 
 # Build output
 dist/
+dist-frontend/
 
 # Environment variables
 .env
 .env.local
+.env.*.local
 
 # Database
 /data/
@@ -40,5 +42,9 @@ coverage/
 # PRD filer (arbejdsdokumenter)
 PRD-*.md
 
-# Claude lokale filer
+# Claude lokale filer (agents/ committes, lokale indstillinger ikke)
 .claude/ralph-loop.local.md
+.claude/settings.local.json
+
+# Vercel CLI
+.vercel
