@@ -1380,7 +1380,7 @@ var AuthService = class {
     const { username, password } = credentials;
     try {
       const user = await queryOne(
-        "SELECT id, username, email, password_hash FROM admin_users WHERE username = $1",
+        "SELECT id, username, password_hash FROM admin_users WHERE username = $1",
         [username]
       );
       if (!user) {
@@ -1397,8 +1397,7 @@ var AuthService = class {
         token,
         user: {
           id: user.id,
-          username: user.username,
-          email: user.email
+          username: user.username
         }
       };
     } catch (error) {

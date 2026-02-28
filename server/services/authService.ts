@@ -61,7 +61,7 @@ export class AuthService {
     try {
       // Find user by username (Postgres version)
       const user = await queryOne<AdminUser>(
-        'SELECT id, username, email, password_hash FROM admin_users WHERE username = $1',
+        'SELECT id, username, password_hash FROM admin_users WHERE username = $1',
         [username]
       );
 
@@ -87,7 +87,6 @@ export class AuthService {
         user: {
           id: user.id,
           username: user.username,
-          email: user.email,
         },
       };
     } catch (error) {
