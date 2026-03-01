@@ -10,7 +10,7 @@ const Contact = () => {
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Kontakt Elin</h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Har du spørgsmål eller vil du gerne booke? Kontakt mig direkte på telefon eller email
+            Har du spørgsmål eller vil du gerne booke? Kontakt mig direkte på telefon eller email.
           </p>
         </div>
 
@@ -19,7 +19,7 @@ const Contact = () => {
           <div className="bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-200 dark:border-primary-700 rounded-2xl p-8 mb-12 text-center">
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Klar til at booke?</h3>
             <p className="text-gray-700 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
-              Ring eller skriv til Elin for at høre om ledige pladser og booke din overnatning.
+              Ring eller skriv til mig for at høre om ledige pladser og booke din overnatning.
               Jeg svarer normalt inden for få timer.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -52,7 +52,7 @@ const Contact = () => {
                   <div className="ml-4">
                     <h4 className="font-semibold text-gray-900 dark:text-white">Telefon</h4>
                     <p className="text-gray-600 dark:text-gray-300 mt-1">+45 12 34 56 78</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Hverdage 9-18, Weekend 10-16</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Hverdage kl. 9-18, weekend kl. 10-16</p>
                   </div>
                 </div>
 

@@ -19,7 +19,7 @@ const Footer = () => {
               <span className="text-xl font-bold">Elins Have</span>
             </div>
             <p className="text-gray-400">
-              En smuk og fredelig oase for cyklister på eventyr gennem Danmark. Velkommen til at overnatte i
+              En smuk og fredelig oase for cyklister på eventyr gennem Danmark. Kom og overnat i
               naturskønne omgivelser.
             </p>
           </div>
@@ -150,7 +150,7 @@ const Footer = () => {
               </li>
               <li className="pt-4">
                 <p className="text-sm">
-                  Send gerne en besked hvis du ankommer uden for disse tider, så finder vi en løsning.
+                  Send gerne en besked, hvis du ankommer uden for disse tider, så finder vi en løsning.
                 </p>
               </li>
             </ul>

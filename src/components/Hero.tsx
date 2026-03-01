@@ -35,13 +35,13 @@ const Hero = () => {
         </p>
         <p className="text-lg sm:text-xl mb-12 text-white/90 max-w-2xl mx-auto">
           Sæt dit telt op i naturskønne omgivelser og nyd en velfortjent pause på din cykeltur gennem
-          Danmark
+          Danmark.
         </p>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button onClick={scrollToContact} className="btn-primary text-lg px-8 py-4">
-            Book Din Overnatning
+            Book din overnatning
           </button>
           <a
             href="#about"
@@ -54,7 +54,7 @@ const Hero = () => {
             }}
             className="btn-secondary text-lg px-8 py-4"
           >
-            Læs Mere
+            Læs mere
           </a>
         </div>
 

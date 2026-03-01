@@ -23,7 +23,7 @@ const Pricing = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-2">Enkelt Overnatning</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-2">Enkelt overnatning</h3>
               <div className="text-center mb-6">
                 <span className="text-5xl font-bold text-primary-600 dark:text-primary-400">150</span>
                 <span className="text-2xl text-gray-600 dark:text-gray-300"> kr.</span>
@@ -96,11 +96,11 @@ const Pricing = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-2">2-3 Nætter</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-2">2-3 nætter</h3>
               <div className="text-center mb-6">
                 <span className="text-5xl font-bold text-primary-600 dark:text-primary-400">400</span>
                 <span className="text-2xl text-gray-600 dark:text-gray-300"> kr.</span>
-                <p className="text-gray-500 dark:text-gray-400 mt-2">per person / 3 nætter</p>
+                <p className="text-gray-500 dark:text-gray-400 mt-2">per person / 2-3 nætter</p>
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start">
@@ -164,7 +164,7 @@ const Pricing = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-2">Ugentlig Ophold</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-2">Ugentligt ophold</h3>
               <div className="text-center mb-6">
                 <span className="text-5xl font-bold text-primary-600 dark:text-primary-400">900</span>
                 <span className="text-2xl text-gray-600 dark:text-gray-300"> kr.</span>
@@ -223,7 +223,7 @@ const Pricing = () => {
         {/* Additional Info */}
         <div className="mt-16 text-center">
           <div className="bg-white dark:bg-gray-700 rounded-2xl p-8 max-w-3xl mx-auto shadow-md">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Ekstra Information</h3>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Ekstra information</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left">
               <div>
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Betaling</h4>
@@ -231,7 +231,7 @@ const Pricing = () => {
               </div>
               <div>
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Afbestilling</h4>
-                <p className="text-gray-600 dark:text-gray-300">Gratis op til 24 timer før ankomst</p>
+                <p className="text-gray-600 dark:text-gray-300">Gratis afbestilling op til 24 timer før ankomst</p>
               </div>
               <div>
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Børn under 12 år</h4>

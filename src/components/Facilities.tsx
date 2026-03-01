@@ -40,7 +40,7 @@ const Facilities = () => {
         </svg>
       ),
       title: 'Køkkenadgang',
-      description: 'Mulighed for at forberede let mad og drikke',
+      description: 'Mulighed for at tilberede let mad og drikke',
     },
     {
       icon: (
@@ -214,7 +214,7 @@ const Facilities = () => {
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Støj efter kl. 22:00 undgås</span>
+                  <span>Undgå støj efter kl. 22:00</span>
                 </li>
                 <li className="flex items-start">
                   <svg

@@ -14,8 +14,8 @@ export const galleryFallback: GalleryImage[] = [
   },
   {
     id: 2,
-    title: 'Camping plads',
-    description: 'Rummelig camping plads med god plads til flere telte',
+    title: 'Campingplads',
+    description: 'Rummelig campingplads med god plads til telte',
     image_url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop',
     file_path: null,
     is_active: true,
@@ -26,7 +26,7 @@ export const galleryFallback: GalleryImage[] = [
   {
     id: 3,
     title: 'Haven ved solnedgang',
-    description: 'Den smukke have ved solnedgangstidspunkt',
+    description: 'Den smukke have ved solnedgang',
     image_url: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&h=600&fit=crop',
     file_path: null,
     is_active: true,
