@@ -130,7 +130,7 @@ const Footer = () => {
                 <span>
                   Naturvej 42
                   <br />
-                  4000 Roskilde
+                  6760 Ribe
                 </span>
               </li>
             </ul>
