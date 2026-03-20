@@ -12,7 +12,7 @@ interface Facility {
 }
 
 const FacilityIcon = ({ iconName }: { iconName: string }) => {
-  const Icon = (LucideIcons as Record<string, React.ComponentType<{ className?: string }>>)[iconName]
+  const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[iconName]
   if (!Icon) return <LucideIcons.Star className="w-8 h-8" />
   return <Icon className="w-8 h-8" />
 }
