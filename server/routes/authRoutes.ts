@@ -15,4 +15,8 @@ router.get('/validate', authenticateToken, authController.validateToken.bind(aut
 // Admin user creation (for initial setup - consider removing or protecting further)
 router.post('/users', authController.createUser.bind(authController));
 
+// GitHub OAuth routes
+router.get('/github', authController.githubLogin.bind(authController));
+router.get('/github/callback', authController.githubCallback.bind(authController));
+
 export default router;

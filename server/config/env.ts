@@ -47,6 +47,13 @@ export const config = {
   blob: {
     readWriteToken: process.env.BLOB_READ_WRITE_TOKEN || '',
   },
+
+  // GitHub OAuth
+  github: {
+    clientId: process.env.GITHUB_CLIENT_ID || '',
+    clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+    callbackUrl: process.env.GITHUB_CALLBACK_URL || 'https://overnatihaven.vercel.app/api/auth/github/callback',
+  },
 };
 
 export const isDevelopment = config.nodeEnv === 'development';

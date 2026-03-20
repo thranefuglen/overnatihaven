@@ -37,10 +37,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Check for existing token on mount
+    // Handle token delivered via URL parameter after GitHub OAuth redirect
+    const params = new URLSearchParams(window.location.search)
+    const urlToken = params.get('token')
+
+    if (urlToken) {
+      try {
+        const payload = JSON.parse(atob(urlToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+        const userData: AuthUser = { id: payload.userId ?? 0, username: payload.username, email: '' }
+        localStorage.setItem('auth_token', urlToken)
+        localStorage.setItem('auth_user', JSON.stringify(userData))
+        setUser(userData)
+        setToken(urlToken)
+        // Remove ?token= from URL without reloading the page
+        const cleanUrl = window.location.pathname
+        window.history.replaceState(null, '', cleanUrl)
+        setIsLoading(false)
+        return
+      } catch (error) {
+        console.error('Error parsing OAuth token from URL:', error)
+      }
+    }
+
+    // Check for existing token in localStorage
     const storedToken = localStorage.getItem('auth_token')
     const storedUser = localStorage.getItem('auth_user')
-    
+
     if (storedToken && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser)

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { authService } from '../services/authService';
+import { githubOAuthService } from '../services/githubOAuthService';
 import { createAdminUserSchema } from '../types';
 import { logger } from '../config/logger';
 
@@ -174,6 +175,51 @@ export class AuthController {
         success: false,
         message: 'Token validering fejlede',
       });
+    }
+  }
+
+  /**
+   * Redirect to GitHub OAuth authorization URL
+   */
+  async githubLogin(_req: Request, res: Response): Promise<void> {
+    const url = githubOAuthService.getAuthorizationUrl();
+    res.redirect(url);
+  }
+
+  /**
+   * Handle GitHub OAuth callback — validate state, exchange code, issue JWT
+   */
+  async githubCallback(req: Request, res: Response): Promise<void> {
+    const { code, state, error } = req.query as Record<string, string>;
+
+    if (error || !code || !state) {
+      logger.warn('GitHub OAuth callback error', { error, hasCode: !!code });
+      res.redirect('/admin/login?error=oauth_failed');
+      return;
+    }
+
+    if (!githubOAuthService.validateState(state)) {
+      logger.warn('GitHub OAuth invalid state parameter');
+      res.redirect('/admin/login?error=oauth_failed');
+      return;
+    }
+
+    try {
+      const accessToken = await githubOAuthService.exchangeCodeForToken(code);
+      const username = await githubOAuthService.getGitHubUser(accessToken);
+
+      if (!githubOAuthService.isAllowedUser(username)) {
+        logger.warn('GitHub OAuth unauthorized user', { username });
+        res.redirect('/admin/login?error=unauthorized');
+        return;
+      }
+
+      const jwt = authService.generateToken(0, username);
+      logger.info('GitHub OAuth login successful', { username });
+      res.redirect(`/admin/login?token=${jwt}`);
+    } catch (err) {
+      logger.error('GitHub OAuth callback failed', { error: (err as Error).message });
+      res.redirect('/admin/login?error=oauth_failed');
     }
   }
 }
