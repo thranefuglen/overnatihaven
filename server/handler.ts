@@ -7,6 +7,8 @@ import inquiryRoutes from './routes/inquiryRoutes';
 import contactRoutes from './routes/contactRoutes';
 import galleryRoutes from './routes/galleryRoutes';
 import authRoutes from './routes/authRoutes';
+import facilityRoutes from './routes/facilityRoutes';
+import { runMigrations } from './db/migrate';
 
 const app = express();
 
@@ -47,6 +49,7 @@ app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/facilities', facilityRoutes);
 
 // Error handler
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
@@ -57,7 +60,13 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   });
 });
 
+// Run migrations once per cold start (idempotent — uses IF NOT EXISTS + ON CONFLICT DO NOTHING)
+const migrationPromise = runMigrations().catch((err) => {
+  console.error('Migration failed:', err);
+});
+
 // Export the Express app as a serverless function
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  await migrationPromise;
   return app(req as any, res as any);
 }
