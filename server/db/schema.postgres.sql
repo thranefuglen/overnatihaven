@@ -33,7 +33,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_admin_users_username ON admin_users(userna
 -- Password hash: $2b$10$XWTwpMUZWNMH2hnn8./Xx.ZK79.lPklnXEiwnhUJ6hrhxrCPXiQAO
 INSERT INTO admin_users (username, password_hash)
 VALUES ('admin', '$2b$10$XWTwpMUZWNMH2hnn8./Xx.ZK79.lPklnXEiwnhUJ6hrhxrCPXiQAO')
-ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash;
 
 -- Inquiries Table
 CREATE TABLE IF NOT EXISTS inquiries (
