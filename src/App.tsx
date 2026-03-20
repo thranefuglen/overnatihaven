@@ -8,6 +8,7 @@ import Login from './components/Login'
 import GalleryAdmin from './components/GalleryAdmin'
 import InquiriesAdmin from './components/InquiriesAdmin'
 import ContactsAdmin from './components/ContactsAdmin'
+import FacilitiesAdmin from './components/FacilitiesAdmin'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -72,6 +73,7 @@ const AdminRoutes: React.FC = () => {
         <Route path="/gallery" element={<GalleryAdmin />} />
         <Route path="/inquiries" element={<InquiriesAdmin />} />
         <Route path="/contacts" element={<ContactsAdmin />} />
+        <Route path="/facilities" element={<FacilitiesAdmin />} />
         <Route path="*" element={<Navigate to="/admin/gallery" replace />} />
       </Routes>
     </AdminLayout>

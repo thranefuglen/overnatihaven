@@ -71,6 +71,30 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             </Link>
             
             <Link
+              to="/admin/facilities"
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                isActive('/admin/facilities')
+                  ? 'bg-primary-100 text-primary-700'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              }`}
+            >
+              <svg
+                className="mr-3 h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
+              </svg>
+              Faciliteter
+            </Link>
+
+            <Link
               to="/admin/contacts"
               className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                 isActive('/admin/contacts')
@@ -144,6 +168,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   {isActive('/admin') && 'Galleri Administration'}
                   {isActive('/admin/inquiries') && 'Forespørgsler'}
                   {isActive('/admin/contacts') && 'Kontaktbeskeder'}
+                  {isActive('/admin/facilities') && 'Faciliteter Administration'}
                 </h1>
               </div>
               

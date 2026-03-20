@@ -1,24 +1,35 @@
 import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { sql } from '@vercel/postgres';
 import { logger } from '../config/logger';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+function readSchema(): string {
+  // Candidate paths in priority order:
+  // 1. Same directory as this file (tsx direct run — tsx polyfills __dirname)
+  // 2. ../server/db/ relative to __dirname (esbuild CJS bundle, __dirname = api/)
+  // 3. project root fallback (Vercel runtime cwd)
+  const candidates = [
+    path.join(__dirname, 'schema.postgres.sql'),
+    path.join(__dirname, '../server/db/schema.postgres.sql'),
+    path.join(process.cwd(), 'server/db/schema.postgres.sql'),
+  ];
 
-/**
- * Run database migrations against Vercel Postgres
- */
-export async function runMigrations(): Promise<void> {
-  const schemaPath = path.join(__dirname, 'schema.postgres.sql');
-
-  if (!fs.existsSync(schemaPath)) {
-    throw new Error(`Schema file not found at: ${schemaPath}`);
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return fs.readFileSync(candidate, 'utf8');
+    }
   }
 
-  const schema = fs.readFileSync(schemaPath, 'utf8');
+  throw new Error(`schema.postgres.sql not found. Tried:\n${candidates.join('\n')}`);
+}
+
+/**
+ * Run database migrations against Vercel Postgres.
+ * Idempotent: uses IF NOT EXISTS and ON CONFLICT DO NOTHING throughout.
+ */
+export async function runMigrations(): Promise<void> {
+  const schema = readSchema();
 
   // Split on semicolons, strip comment lines, filter empty
   const statements = schema

@@ -119,6 +119,33 @@ export interface AdminUser {
   updated_at: string;
 }
 
+// Facility types
+export interface Facility {
+  id: number;
+  title: string;
+  description: string | null;
+  icon_name: string;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateFacilityInput {
+  title: string;
+  description?: string | null;
+  icon_name: string;
+  is_active?: boolean;
+}
+
+export interface UpdateFacilityInput {
+  title?: string;
+  description?: string | null;
+  icon_name?: string;
+  is_active?: boolean;
+  sort_order?: number;
+}
+
 export interface AuthResponse {
   success: boolean;
   token: string;
