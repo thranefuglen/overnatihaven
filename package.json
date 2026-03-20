@@ -40,6 +40,7 @@
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.3",
     "leaflet": "^1.9.4",
+    "lucide-react": "^0.577.0",
     "multer": "^2.0.2",
     "nodemailer": "^6.9.7",
     "react": "^19.0.0",

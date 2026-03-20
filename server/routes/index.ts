@@ -3,6 +3,7 @@ import inquiryRoutes from './inquiryRoutes';
 import contactRoutes from './contactRoutes';
 import galleryRoutes from './galleryRoutes';
 import authRoutes from './authRoutes';
+import facilityRoutes from './facilityRoutes';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/inquiries', inquiryRoutes);
 router.use('/contacts', contactRoutes);
 router.use('/gallery', galleryRoutes);
 router.use('/auth', authRoutes);
+router.use('/facilities', facilityRoutes);
 
 export default router;
