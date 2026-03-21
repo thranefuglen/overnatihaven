@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev:backend": "tsx watch server/index.ts",
     "dev:full": "concurrently \"npm run dev\" \"npm run dev:backend\" --names \"vite,api\" --prefix-colors \"cyan,green\"",
-    "build:api": "esbuild server/handler.ts --bundle --platform=node --format=cjs --packages=external --outfile=api/index.js && cp server/db/schema.postgres.sql api/schema.postgres.sql",
+    "build:api": "esbuild server/handler.ts --bundle --platform=node --format=cjs --packages=external --loader:.sql=text --outfile=api/index.js",
     "build": "npm run build:api && vite build",
     "build:backend": "tsc -p tsconfig.server.json",
     "preview": "vite preview",
@@ -16,7 +16,7 @@
     "test": "jest",
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui",
-    "db:migrate": "tsx server/db/migrate.ts"
+    "db:migrate": "esbuild server/db/migrate.ts --bundle --platform=node --format=cjs --packages=external --loader:.sql=text --outfile=node_modules/.cache/migrate.cjs && node node_modules/.cache/migrate.cjs"
   },
   "keywords": [
     "camping",
