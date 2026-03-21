@@ -86,6 +86,12 @@ CREATE TABLE IF NOT EXISTS facilities (
 CREATE INDEX IF NOT EXISTS idx_facilities_sort_order ON facilities(sort_order);
 CREATE INDEX IF NOT EXISTS idx_facilities_is_active ON facilities(is_active);
 
+-- Remove duplicate facilities before adding unique index
+DELETE FROM facilities WHERE id NOT IN (SELECT MIN(id) FROM facilities GROUP BY title);
+
+-- Add unique index on title to prevent duplicates from repeated migrations
+CREATE UNIQUE INDEX IF NOT EXISTS idx_facilities_title_unique ON facilities(title);
+
 -- Seed initial facilities
 INSERT INTO facilities (title, description, icon_name, is_active, sort_order)
 VALUES
@@ -97,7 +103,13 @@ VALUES
     ('Udendørs Lys', 'God belysning i haven om aftenen', 'Moon', true, 6),
     ('Fælles Opholdsrum', 'Hyggeligt område at møde andre cyklister', 'Users', true, 7),
     ('Kort & Vejledning', 'Hjælp til at planlægge din videre rute', 'Map', true, 8)
-ON CONFLICT DO NOTHING;
+ON CONFLICT (title) DO NOTHING;
+
+-- Remove duplicate gallery images before adding unique index
+DELETE FROM gallery_images WHERE id NOT IN (SELECT MIN(id) FROM gallery_images GROUP BY image_url);
+
+-- Add unique index on image_url to prevent duplicates from repeated migrations
+CREATE UNIQUE INDEX IF NOT EXISTS idx_gallery_images_url_unique ON gallery_images(image_url);
 
 -- Insert sample gallery images
 INSERT INTO gallery_images (title, description, image_url, sort_order, is_active)
@@ -108,4 +120,4 @@ VALUES
     ('Bålplads', 'Hyggelig bålplads til sociale aftener', 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&h=600&fit=crop', 4, true),
     ('Faciliteter', 'Rene og velholdte faciliteter for gæster', 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop', 5, true),
     ('Natursti', 'Smuk natursti i nærheden af campingpladsen', 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop', 6, true)
-ON CONFLICT DO NOTHING;
+ON CONFLICT (image_url) DO NOTHING;

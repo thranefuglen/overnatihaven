@@ -43,7 +43,7 @@ router.post('/reset', async (_req: Request, res: Response) => {
          ('Udendørs Lys', 'God belysning i haven om aftenen', 'Moon', true, 6),
          ('Fælles Opholdsrum', 'Hyggeligt område at møde andre cyklister', 'Users', true, 7),
          ('Kort & Vejledning', 'Hjælp til at planlægge din videre rute', 'Map', true, 8)
-       ON CONFLICT DO NOTHING`
+       ON CONFLICT (title) DO NOTHING`
     );
 
     // Re-seed gallery images
@@ -56,7 +56,7 @@ router.post('/reset', async (_req: Request, res: Response) => {
          ('Bålplads', 'Hyggelig bålplads til sociale aftener', 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&h=600&fit=crop', 4, true),
          ('Faciliteter', 'Rene og velholdte faciliteter for gæster', 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop', 5, true),
          ('Natursti', 'Smuk natursti i nærheden af campingpladsen', 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop', 6, true)
-       ON CONFLICT DO NOTHING`
+       ON CONFLICT (image_url) DO NOTHING`
     );
 
     logger.info('Test database reset completed');
