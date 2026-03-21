@@ -8,11 +8,6 @@ export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   
-  // Database
-  database: {
-    path: process.env.DB_PATH || './data/overnatihaven.db',
-  },
-  
   // Email
   email: {
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
