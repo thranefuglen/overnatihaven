@@ -48,7 +48,7 @@ Routes → Controllers → Services → Repositories → Database
 
 ### Database
 
-- **`db/database.ts`** - SQLite connection management
+- **`db/database.ts`** - PostgreSQL connection management (@vercel/postgres)
 - **`db/migrate.ts`** - Migration runner script
 - **`db/schema.sql`** - Database schema definition
 
@@ -276,11 +276,7 @@ DEBUG=* npm run dev:backend
 
 ### Check Database
 
-```bash
-sqlite3 data/overnatihaven.db
-sqlite> .tables
-sqlite> SELECT * FROM inquiries;
-```
+Projektet bruger Vercel Postgres. Brug `psql` eller Vercel Dashboard til at inspicere databasen.
 
 ### Monitor Logs
 

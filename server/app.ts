@@ -44,7 +44,7 @@ export function createApp(): Application {
   // Rate limiting - more lenient in development
   const limiter = rateLimit({
     windowMs: config.rateLimit.windowMs,
-    max: config.nodeEnv === 'development' ? 1000 : config.rateLimit.maxRequests, // 1000 requests in dev, 10 in production
+    max: (config.nodeEnv === 'development' || config.nodeEnv === 'test') ? 1000 : config.rateLimit.maxRequests, // 1000 requests in dev/test, 10 in production
     message: {
       success: false,
       message: 'For mange forespørgsler. Prøv venligst igen senere.',

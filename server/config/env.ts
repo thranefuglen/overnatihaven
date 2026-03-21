@@ -8,11 +8,6 @@ export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   
-  // Database
-  database: {
-    path: process.env.DB_PATH || './data/overnatihaven.db',
-  },
-  
   // Email
   email: {
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -47,6 +42,9 @@ export const config = {
   blob: {
     readWriteToken: process.env.BLOB_READ_WRITE_TOKEN || '',
   },
+
+  // Test
+  testAdminToken: process.env.TEST_ADMIN_TOKEN || '',
 
   // GitHub OAuth
   github: {
