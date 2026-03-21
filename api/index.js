@@ -2030,132 +2030,14 @@ var facilityRoutes_default = router5;
 
 // server/db/migrate.ts
 var import_config = require("dotenv/config");
-var import_fs3 = __toESM(require("fs"));
-var import_path3 = __toESM(require("path"));
 var import_postgres2 = require("@vercel/postgres");
-function readSchema() {
-  const candidates = [
-    import_path3.default.join(__dirname, "schema.postgres.sql"),
-    import_path3.default.join(__dirname, "../server/db/schema.postgres.sql"),
-    import_path3.default.join(process.cwd(), "server/db/schema.postgres.sql")
-  ];
-  for (const candidate of candidates) {
-    try {
-      if (import_fs3.default.existsSync(candidate)) {
-        return import_fs3.default.readFileSync(candidate, "utf8");
-      }
-    } catch {
-    }
-  }
-  return EMBEDDED_SCHEMA;
-}
-var EMBEDDED_SCHEMA = `
--- Vercel Postgres Schema
--- Gallery Images Table
-CREATE TABLE IF NOT EXISTS gallery_images (
-    id SERIAL PRIMARY KEY,
-    title TEXT,
-    description TEXT,
-    image_url TEXT NOT NULL,
-    image_path TEXT,
-    sort_order INTEGER DEFAULT 0,
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
-CREATE INDEX IF NOT EXISTS idx_gallery_images_sort_order ON gallery_images(sort_order);
-CREATE INDEX IF NOT EXISTS idx_gallery_images_is_active ON gallery_images(is_active);
-CREATE INDEX IF NOT EXISTS idx_gallery_images_created_at ON gallery_images(created_at);
+// server/db/schema.postgres.sql
+var schema_postgres_default = "-- Vercel Postgres Schema\r\n-- Gallery Images Table\r\nCREATE TABLE IF NOT EXISTS gallery_images (\r\n    id SERIAL PRIMARY KEY,\r\n    title TEXT,\r\n    description TEXT,\r\n    image_url TEXT NOT NULL,\r\n    image_path TEXT,\r\n    sort_order INTEGER DEFAULT 0,\r\n    is_active BOOLEAN DEFAULT true,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_sort_order ON gallery_images(sort_order);\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_is_active ON gallery_images(is_active);\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_created_at ON gallery_images(created_at);\r\n\r\n-- Admin Users Table\r\nCREATE TABLE IF NOT EXISTS admin_users (\r\n    id SERIAL PRIMARY KEY,\r\n    username TEXT UNIQUE NOT NULL,\r\n    email TEXT,\r\n    password_hash TEXT NOT NULL,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create unique index for username\r\nCREATE UNIQUE INDEX IF NOT EXISTS idx_admin_users_username ON admin_users(username);\r\n\r\n-- Insert default admin user (password: admin123)\r\n-- Password hash: $2b$10$XWTwpMUZWNMH2hnn8./Xx.ZK79.lPklnXEiwnhUJ6hrhxrCPXiQAO\r\nINSERT INTO admin_users (username, password_hash)\r\nVALUES ('admin', '$2b$10$XWTwpMUZWNMH2hnn8./Xx.ZK79.lPklnXEiwnhUJ6hrhxrCPXiQAO')\r\nON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash;\r\n\r\n-- Inquiries Table\r\nCREATE TABLE IF NOT EXISTS inquiries (\r\n    id SERIAL PRIMARY KEY,\r\n    name TEXT NOT NULL,\r\n    email TEXT NOT NULL,\r\n    phone TEXT,\r\n    arrival_date DATE NOT NULL,\r\n    departure_date DATE NOT NULL,\r\n    num_people INTEGER NOT NULL,\r\n    message TEXT,\r\n    status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'confirmed', 'declined', 'completed')),\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for inquiries\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_status ON inquiries(status);\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_dates ON inquiries(arrival_date, departure_date);\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_created_at ON inquiries(created_at);\r\n\r\n-- Contacts Table\r\nCREATE TABLE IF NOT EXISTS contacts (\r\n    id SERIAL PRIMARY KEY,\r\n    name TEXT NOT NULL,\r\n    email TEXT NOT NULL,\r\n    subject TEXT,\r\n    message TEXT NOT NULL,\r\n    is_read BOOLEAN DEFAULT false,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for contacts\r\nCREATE INDEX IF NOT EXISTS idx_contacts_is_read ON contacts(is_read);\r\nCREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at);\r\n\r\n-- Facilities Table\r\nCREATE TABLE IF NOT EXISTS facilities (\r\n    id SERIAL PRIMARY KEY,\r\n    title TEXT NOT NULL,\r\n    description TEXT,\r\n    icon_name TEXT NOT NULL,\r\n    is_active BOOLEAN DEFAULT true,\r\n    sort_order INTEGER DEFAULT 0,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for facilities\r\nCREATE INDEX IF NOT EXISTS idx_facilities_sort_order ON facilities(sort_order);\r\nCREATE INDEX IF NOT EXISTS idx_facilities_is_active ON facilities(is_active);\r\n\r\n-- Seed initial facilities\r\nINSERT INTO facilities (title, description, icon_name, is_active, sort_order)\r\nVALUES\r\n    ('Toilet & Bad', 'Adgang til toilet og brusebad i forbindelse med overnatningen', 'Home', true, 1),\r\n    ('Str\xF8m', 'Mulighed for at oplade telefon og cykellygter', 'Zap', true, 2),\r\n    ('K\xF8kkenadgang', 'Mulighed for at tilberede let mad og drikke', 'UtensilsCrossed', true, 3),\r\n    ('WiFi', 'Gratis tr\xE5dl\xF8st internet i hele haven', 'Wifi', true, 4),\r\n    ('Sikkert Omr\xE5de', 'Privat og sikkert omr\xE5de til parkering af cykler', 'ShieldCheck', true, 5),\r\n    ('Udend\xF8rs Lys', 'God belysning i haven om aftenen', 'Moon', true, 6),\r\n    ('F\xE6lles Opholdsrum', 'Hyggeligt omr\xE5de at m\xF8de andre cyklister', 'Users', true, 7),\r\n    ('Kort & Vejledning', 'Hj\xE6lp til at planl\xE6gge din videre rute', 'Map', true, 8)\r\nON CONFLICT DO NOTHING;\r\n\r\n-- Insert sample gallery images\r\nINSERT INTO gallery_images (title, description, image_url, sort_order, is_active)\r\nVALUES\r\n    ('Telt i haven', 'Smukt telt omgivet af gr\xF8nne tr\xE6er og blomster', 'https://images.unsplash.com/photo-1523987351232-1ca2c5be4eb5?w=800&h=600&fit=crop', 1, true),\r\n    ('Camping plads', 'Rummelig camping plads med god plads til flere telte', 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop', 2, true),\r\n    ('Haven ved solnedgang', 'Den smukke have ved solnedgangstidspunkt', 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&h=600&fit=crop', 3, true),\r\n    ('B\xE5lplads', 'Hyggelig b\xE5lplads til sociale aftener', 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&h=600&fit=crop', 4, true),\r\n    ('Faciliteter', 'Rene og velholdte faciliteter for g\xE6ster', 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop', 5, true),\r\n    ('Natursti', 'Smuk natursti i n\xE6rheden af campingpladsen', 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop', 6, true)\r\nON CONFLICT DO NOTHING;\r\n";
 
--- Admin Users Table
-CREATE TABLE IF NOT EXISTS admin_users (
-    id SERIAL PRIMARY KEY,
-    username TEXT UNIQUE NOT NULL,
-    email TEXT,
-    password_hash TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE UNIQUE INDEX IF NOT EXISTS idx_admin_users_username ON admin_users(username);
-
-INSERT INTO admin_users (username, password_hash)
-VALUES ('admin', '$2b$10$XWTwpMUZWNMH2hnn8./Xx.ZK79.lPklnXEiwnhUJ6hrhxrCPXiQAO')
-ON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash;
-
--- Inquiries Table
-CREATE TABLE IF NOT EXISTS inquiries (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    phone TEXT,
-    arrival_date DATE NOT NULL,
-    departure_date DATE NOT NULL,
-    num_people INTEGER NOT NULL,
-    message TEXT,
-    status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'confirmed', 'declined', 'completed')),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX IF NOT EXISTS idx_inquiries_status ON inquiries(status);
-CREATE INDEX IF NOT EXISTS idx_inquiries_dates ON inquiries(arrival_date, departure_date);
-CREATE INDEX IF NOT EXISTS idx_inquiries_created_at ON inquiries(created_at);
-
--- Contacts Table
-CREATE TABLE IF NOT EXISTS contacts (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    subject TEXT,
-    message TEXT NOT NULL,
-    is_read BOOLEAN DEFAULT false,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX IF NOT EXISTS idx_contacts_is_read ON contacts(is_read);
-CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at);
-
--- Facilities Table
-CREATE TABLE IF NOT EXISTS facilities (
-    id SERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    description TEXT,
-    icon_name TEXT NOT NULL,
-    is_active BOOLEAN DEFAULT true,
-    sort_order INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX IF NOT EXISTS idx_facilities_sort_order ON facilities(sort_order);
-CREATE INDEX IF NOT EXISTS idx_facilities_is_active ON facilities(is_active);
-
-INSERT INTO facilities (title, description, icon_name, is_active, sort_order)
-VALUES
-    ('Toilet & Bad', 'Adgang til toilet og brusebad i forbindelse med overnatningen', 'Home', true, 1),
-    ('Str\xF8m', 'Mulighed for at oplade telefon og cykellygter', 'Zap', true, 2),
-    ('K\xF8kkenadgang', 'Mulighed for at tilberede let mad og drikke', 'UtensilsCrossed', true, 3),
-    ('WiFi', 'Gratis tr\xE5dl\xF8st internet i hele haven', 'Wifi', true, 4),
-    ('Sikkert Omr\xE5de', 'Privat og sikkert omr\xE5de til parkering af cykler', 'ShieldCheck', true, 5),
-    ('Udend\xF8rs Lys', 'God belysning i haven om aftenen', 'Moon', true, 6),
-    ('F\xE6lles Opholdsrum', 'Hyggeligt omr\xE5de at m\xF8de andre cyklister', 'Users', true, 7),
-    ('Kort & Vejledning', 'Hj\xE6lp til at planl\xE6gge din videre rute', 'Map', true, 8)
-ON CONFLICT DO NOTHING;
-
-INSERT INTO gallery_images (title, description, image_url, sort_order, is_active)
-VALUES
-    ('Telt i haven', 'Smukt telt omgivet af gr\xF8nne tr\xE6er og blomster', 'https://images.unsplash.com/photo-1523987351232-1ca2c5be4eb5?w=800&h=600&fit=crop', 1, true),
-    ('Camping plads', 'Rummelig camping plads med god plads til flere telte', 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop', 2, true),
-    ('Haven ved solnedgang', 'Den smukke have ved solnedgangstidspunkt', 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&h=600&fit=crop', 3, true),
-    ('B\xE5lplads', 'Hyggelig b\xE5lplads til sociale aftener', 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&h=600&fit=crop', 4, true),
-    ('Faciliteter', 'Rene og velholdte faciliteter for g\xE6ster', 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop', 5, true),
-    ('Natursti', 'Smuk natursti i n\xE6rheden af campingpladsen', 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop', 6, true)
-ON CONFLICT DO NOTHING;
-`;
+// server/db/migrate.ts
 async function runMigrations() {
-  const schema = readSchema();
-  const statements = schema.split(";").map(
+  const statements = schema_postgres_default.split(";").map(
     (s) => s.split("\n").filter((line) => !line.trim().startsWith("--")).join("\n").trim()
   ).filter((s) => s.length > 0);
   logger.info(`Running ${statements.length} migration statements`);
@@ -2164,7 +2046,7 @@ async function runMigrations() {
   }
   logger.info("Database migrations completed successfully");
 }
-var isMain = process.argv[1]?.replace(/\\/g, "/").endsWith("server/db/migrate.ts");
+var isMain = /migrate\.(ts|cjs|js)$/.test(process.argv[1]?.replace(/\\/g, "/") ?? "");
 if (isMain) {
   runMigrations().then(() => {
     logger.info("Migration completed");
