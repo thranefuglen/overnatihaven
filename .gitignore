@@ -49,8 +49,5 @@ PRD-*.md
 # Vercel CLI
 .vercel
 
-# Vercel build output (genbygges under deployment)
-api/index.js
-
 # Lokale env-filer fra vercel env pull
 .env.preview
