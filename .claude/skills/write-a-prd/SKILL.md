@@ -57,10 +57,13 @@ Do NOT include specific file paths or code snippets. They may end up being outda
 
 ## Testing Decisions
 
+Hvilke brugerflows skal E2E-testes? Beskriv scenarierne.
+
 A list of testing decisions that were made. Include:
 
 - A description of what makes a good test (only test external behavior, not implementation details)
 - Which modules will be tested
+- E2E test scenarios (Playwright tests in `e2e/` — see `e2e/login.spec.ts` for reference)
 - Prior art for the tests (i.e. similar types of tests in the codebase)
 
 ## Out of Scope

@@ -16,3 +16,10 @@ Dette projekt deployer automatisk via Vercel ved push/merge til `main`.
 | Production | Vercel Postgres (prod) | Merge til `main` |
 | Preview | Vercel Postgres (dev/scratch) | Push til hvilken som helst branch |
 | Development | Vercel Postgres (dev/scratch) | Lokalt |
+
+## Test-regler
+
+- Når du implementerer en feature, skriv altid en Playwright E2E-test der dækker de kritiske brugerflows. Testfiler placeres i `e2e/`-mappen.
+- Tests skal bruge `POST /api/test/reset` i `beforeEach` for at sikre known database state.
+- Se `e2e/login.spec.ts` som eksempel på teststruktur og -konventioner.
+- Kør tests med `npm run test:e2e`.
