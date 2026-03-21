@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { authService } from '../services/authService';
+import { config } from '../config/env';
 import { logger } from '../config/logger';
 
 /**
@@ -27,6 +28,13 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
         success: false,
         message: 'Access token er påkrævet',
       });
+      return;
+    }
+
+    // TEST_ADMIN_TOKEN bypass — only active when env var is set
+    if (config.testAdminToken && token === config.testAdminToken) {
+      req.user = { id: 1, username: 'admin' };
+      next();
       return;
     }
 

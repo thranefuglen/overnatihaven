@@ -43,6 +43,9 @@ export const config = {
     readWriteToken: process.env.BLOB_READ_WRITE_TOKEN || '',
   },
 
+  // Test
+  testAdminToken: process.env.TEST_ADMIN_TOKEN || '',
+
   // GitHub OAuth
   github: {
     clientId: process.env.GITHUB_CLIENT_ID || '',
