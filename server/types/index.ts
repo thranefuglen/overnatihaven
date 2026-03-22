@@ -67,6 +67,7 @@ export const createGalleryImageSchema = z.object({
   image_url: z.string().optional(),
   file_path: z.string().optional(),
   is_active: z.preprocess(val => val === 'true' || val === true, z.boolean()).default(true),
+  show_in_hero: z.preprocess(val => val === 'true' || val === true, z.boolean()).default(false),
   sort_order: z.preprocess(val => val === '' || val == null ? 0 : Number(val), z.number().int().min(0)).default(0),
 });
 
@@ -103,6 +104,7 @@ export interface GalleryImage {
   image_url: string;
   file_path: string | null;
   is_active: boolean;
+  show_in_hero: boolean;
   sort_order: number;
   created_at: string;
   updated_at: string;

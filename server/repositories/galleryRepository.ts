@@ -11,7 +11,7 @@ export class GalleryRepository {
   async getActiveImages(): Promise<GalleryImage[]> {
     try {
       const rows = await query<GalleryImage>(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          WHERE is_active = true
          ORDER BY sort_order ASC, created_at DESC`
@@ -24,12 +24,32 @@ export class GalleryRepository {
   }
 
   /**
+   * Get hero images (show_in_hero=true), falls back to active images if none selected
+   */
+  async getHeroImages(): Promise<GalleryImage[]> {
+    try {
+      const rows = await query<GalleryImage>(
+        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
+         FROM gallery_images
+         WHERE show_in_hero = true AND is_active = true
+         ORDER BY sort_order ASC, created_at DESC`
+      );
+      if (rows.length > 0) return rows;
+      // Fallback to all active images
+      return this.getActiveImages();
+    } catch (error) {
+      console.error('Error fetching hero images:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get all gallery images (including inactive) for admin
    */
   async getAllImages(): Promise<GalleryImage[]> {
     try {
       const rows = await query<GalleryImage>(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          ORDER BY sort_order ASC, created_at DESC`
       );
@@ -46,7 +66,7 @@ export class GalleryRepository {
   async getImageById(id: number): Promise<GalleryImage | null> {
     try {
       const row = await queryOne<GalleryImage>(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          WHERE id = $1`,
         [id]
@@ -104,7 +124,7 @@ export class GalleryRepository {
    */
   async updateImage(id: number, imageData: UpdateGalleryImageInput): Promise<GalleryImage | null> {
     try {
-      const { title, description, image_url, file_path, is_active, sort_order } = imageData;
+      const { title, description, image_url, file_path, is_active, show_in_hero, sort_order } = imageData;
 
       // Build dynamic update query
       const updateFields: string[] = [];
@@ -130,6 +150,10 @@ export class GalleryRepository {
       if (is_active !== undefined) {
         updateFields.push(`is_active = $${paramIndex++}`);
         updateValues.push(is_active);
+      }
+      if (show_in_hero !== undefined) {
+        updateFields.push(`show_in_hero = $${paramIndex++}`);
+        updateValues.push(show_in_hero);
       }
       if (sort_order !== undefined) {
         updateFields.push(`sort_order = $${paramIndex++}`);

@@ -38,6 +38,30 @@ export class GalleryController {
   }
 
   /**
+   * Get hero images (public endpoint)
+   */
+  async getHeroImages(_req: Request, res: Response): Promise<void> {
+    try {
+      const images = await galleryRepository.getHeroImages();
+
+      res.status(200).json({
+        success: true,
+        data: images,
+        count: images.length,
+      });
+    } catch (error) {
+      logger.error('Error in getHeroImages controller', {
+        error: (error as Error).message
+      });
+
+      res.status(500).json({
+        success: false,
+        message: 'Kunne ikke hente hero-billeder',
+      });
+    }
+  }
+
+  /**
    * Get all gallery images (admin endpoint)
    */
   async getAllImages(_req: Request, res: Response): Promise<void> {

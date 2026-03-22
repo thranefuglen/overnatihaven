@@ -1,6 +1,95 @@
-import { API_BASE_URL } from '../config/api'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { API_URL, API_BASE_URL } from '../config/api'
+import { GalleryImage } from '../types'
+import { galleryFallback } from '../data/galleryFallback'
+
+const SLIDE_DURATION = 8000 // ms per slide
+const FADE_DURATION = 1500 // ms crossfade
 
 const Hero = () => {
+  const [images, setImages] = useState<string[]>([])
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [nextIndex, setNextIndex] = useState<number | null>(null)
+  const [fadeIn, setFadeIn] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch(`${API_URL}/gallery/hero`)
+        if (!response.ok) throw new Error('Failed to fetch')
+        const data = await response.json()
+        const activeImages = (data.data || [])
+          .filter((img: GalleryImage) => img.is_active)
+          .sort((a: GalleryImage, b: GalleryImage) => a.sort_order - b.sort_order)
+          .map((img: GalleryImage) =>
+            img.image_url.startsWith('http')
+              ? img.image_url
+              : `${API_BASE_URL}${img.image_url}`
+          )
+        if (activeImages.length > 0) setImages(activeImages)
+        else setImages(getFallbackUrls())
+      } catch {
+        setImages(getFallbackUrls())
+      }
+    }
+
+    const getFallbackUrls = () =>
+      galleryFallback
+        .filter((img) => img.is_active)
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((img) =>
+          img.image_url.startsWith('http')
+            ? img.image_url
+            : `${API_BASE_URL}${img.image_url}`
+        )
+
+    fetchImages()
+  }, [])
+
+  // Preload next image
+  const preload = useCallback(
+    (index: number) => {
+      if (images.length === 0) return
+      const img = new Image()
+      img.src = images[index]
+    },
+    [images]
+  )
+
+  // Start the slideshow cycle
+  useEffect(() => {
+    if (images.length <= 1) return
+
+    const startTransition = () => {
+      const next = (activeIndex + 1) % images.length
+      preload(next)
+      setNextIndex(next)
+      // Small delay to ensure the next layer is mounted before fading in
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setFadeIn(true)
+        })
+      })
+
+      // After fade completes, promote next to active
+      timerRef.current = setTimeout(() => {
+        setActiveIndex(next)
+        setNextIndex(null)
+        setFadeIn(false)
+      }, FADE_DURATION)
+    }
+
+    const interval = setInterval(startTransition, SLIDE_DURATION)
+
+    // Preload the next image ahead of time
+    preload((activeIndex + 1) % images.length)
+
+    return () => {
+      clearInterval(interval)
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [activeIndex, images.length, preload])
 
   const scrollToContact = () => {
     const element = document.querySelector('#contact')
@@ -9,18 +98,40 @@ const Hero = () => {
     }
   }
 
+  const panClass = (index: number) =>
+    index % 2 === 0 ? 'hero-pan-left' : 'hero-pan-right'
+
   return (
-    <section id="hero" className="relative min-h-screen flex items-center pt-16 sm:pt-20">
-      {/* Background Image with Overlay */}
+    <section id="hero" className="relative min-h-screen flex items-center pt-16 sm:pt-20 overflow-hidden">
+      {/* Background Slideshow */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/70 to-primary-800/60 z-10" />
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              `url('${API_BASE_URL}/uploads/gallery/616558711_1268700155074587_3384761009880758784_n.jpg')`,
-          }}
-        />
+        {/* Gradient overlay - on top of images */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 z-10" />
+
+        {/* Active slide (bottom layer) */}
+        {images.length > 0 && (
+          <div className="absolute inset-0">
+            <div
+              key={`active-${activeIndex}`}
+              className={`absolute inset-[-20%] bg-cover bg-center ${panClass(activeIndex)}`}
+              style={{ backgroundImage: `url('${images[activeIndex]}')` }}
+            />
+          </div>
+        )}
+
+        {/* Next slide (top layer, fades in over active) */}
+        {nextIndex !== null && (
+          <div
+            className={`absolute inset-0 transition-opacity ${fadeIn ? 'opacity-100' : 'opacity-0'}`}
+            style={{ transitionDuration: `${FADE_DURATION}ms` }}
+          >
+            <div
+              key={`next-${nextIndex}`}
+              className={`absolute inset-[-20%] bg-cover bg-center ${panClass(nextIndex)}`}
+              style={{ backgroundImage: `url('${images[nextIndex]}')` }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Content */}
