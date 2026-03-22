@@ -7,6 +7,7 @@ const router = Router();
 
 // Public gallery endpoints
 router.get('/', galleryController.getActiveImages.bind(galleryController));
+router.get('/hero', galleryController.getHeroImages.bind(galleryController));
 
 // Admin gallery endpoints (protected)
 router.get('/admin', authenticateToken, galleryController.getAllImages.bind(galleryController));

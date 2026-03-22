@@ -9,6 +9,7 @@ interface GalleryImage {
   image_url: string
   file_path: string | null
   is_active: boolean
+  show_in_hero: boolean
   sort_order: number
   created_at: string
   updated_at: string
@@ -92,6 +93,30 @@ const GalleryAdmin: React.FC = () => {
 
       setImages(images.map(img => 
         img.id === id ? { ...img, is_active: isActive } : img
+      ))
+    } catch (error) {
+      console.error('Error updating image:', error)
+      setError('Kunne ikke opdatere billede')
+    }
+  }
+
+  const handleToggleHero = async (id: number, showInHero: boolean) => {
+    try {
+      const response = await fetch(`${API_URL}/gallery/admin/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ show_in_hero: showInHero }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update image')
+      }
+
+      setImages(images.map(img =>
+        img.id === id ? { ...img, show_in_hero: showInHero } : img
       ))
     } catch (error) {
       console.error('Error updating image:', error)
@@ -264,6 +289,11 @@ const GalleryAdmin: React.FC = () => {
                       }`}>
                         {image.is_active ? 'Aktiv' : 'Inaktiv'}
                       </span>
+                      {image.show_in_hero && (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          Hero
+                        </span>
+                      )}
                       <span className="text-xs text-gray-500">
                         Rækkefølge: {image.sort_order}
                       </span>
@@ -272,6 +302,19 @@ const GalleryAdmin: React.FC = () => {
 
                   {/* Actions */}
                   <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleToggleHero(image.id, !image.show_in_hero)}
+                      className={`p-2 rounded-md text-sm font-medium transition-colors ${
+                        image.show_in_hero
+                          ? 'text-blue-600 hover:text-blue-800'
+                          : 'text-gray-400 hover:text-blue-600'
+                      }`}
+                      title={image.show_in_hero ? 'Fjern fra Hero' : 'Vis i Hero'}
+                    >
+                      <svg className="h-5 w-5" fill={image.show_in_hero ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                      </svg>
+                    </button>
                     <button
                       onClick={() => handleToggleActive(image.id, !image.is_active)}
                       className={`p-2 rounded-md text-sm font-medium transition-colors ${
