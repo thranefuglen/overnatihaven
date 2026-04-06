@@ -8,10 +8,13 @@ const FADE_DURATION = 1500 // ms crossfade
 
 const Hero = () => {
   const [images, setImages] = useState<string[]>([])
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [nextIndex, setNextIndex] = useState<number | null>(null)
-  const [fadeIn, setFadeIn] = useState(false)
+  // Two persistent layers (A and B) that swap roles each transition
+  const [layerA, setLayerA] = useState({ imageIndex: 0 })
+  const [layerB, setLayerB] = useState({ imageIndex: 1 })
+  const [topLayer, setTopLayer] = useState<'A' | 'B'>('A') // which layer is currently visible on top
+  const [fading, setFading] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const cycleRef = useRef(0)
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -62,34 +65,42 @@ const Hero = () => {
     if (images.length <= 1) return
 
     const startTransition = () => {
-      const next = (activeIndex + 1) % images.length
-      preload(next)
-      setNextIndex(next)
-      // Small delay to ensure the next layer is mounted before fading in
+      cycleRef.current++
+      const cycle = cycleRef.current
+      const nextImageIndex = (cycle + 1) % images.length
+
+      // Prepare the hidden (bottom) layer with the next image
+      if (topLayer === 'A') {
+        setLayerB({ imageIndex: (cycle) % images.length })
+      } else {
+        setLayerA({ imageIndex: (cycle) % images.length })
+      }
+
+      // Preload the image after next
+      preload(nextImageIndex)
+
+      // Start fading to reveal the bottom layer (which now has the new image)
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          setFadeIn(true)
+          setFading(true)
         })
       })
 
-      // After fade completes, promote next to active
+      // After fade completes, swap which layer is on top
       timerRef.current = setTimeout(() => {
-        setActiveIndex(next)
-        setNextIndex(null)
-        setFadeIn(false)
+        setTopLayer((prev) => (prev === 'A' ? 'B' : 'A'))
+        setFading(false)
       }, FADE_DURATION)
     }
 
     const interval = setInterval(startTransition, SLIDE_DURATION)
-
-    // Preload the next image ahead of time
-    preload((activeIndex + 1) % images.length)
+    preload(1 % images.length)
 
     return () => {
       clearInterval(interval)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [activeIndex, images.length, preload])
+  }, [images.length, preload, topLayer])
 
   const scrollToContact = () => {
     const element = document.querySelector('#contact')
@@ -98,8 +109,9 @@ const Hero = () => {
     }
   }
 
-  const panClass = (index: number) =>
-    index % 2 === 0 ? 'hero-pan-left' : 'hero-pan-right'
+  // Determine z-order: top layer is visible, bottom layer is hidden behind
+  // When fading, the top layer fades OUT to reveal the bottom layer (which has the new image)
+  const aIsTop = topLayer === 'A'
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center pt-16 sm:pt-20 overflow-hidden">
@@ -108,27 +120,30 @@ const Hero = () => {
         {/* Gradient overlay - on top of images */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 z-10" />
 
-        {/* Active slide (bottom layer) */}
+        {/* Layer A — always mounted, never remounted */}
         {images.length > 0 && (
-          <div className="absolute inset-0">
-            <div
-              key={`active-${activeIndex}`}
-              className={`absolute inset-[-20%] bg-cover bg-center ${panClass(activeIndex)}`}
-              style={{ backgroundImage: `url('${images[activeIndex]}')` }}
+          <div
+            className={`absolute inset-0 transition-opacity ${aIsTop && fading ? 'opacity-0' : !aIsTop && fading ? 'opacity-100' : aIsTop ? 'opacity-100' : 'opacity-0'}`}
+            style={{ transitionDuration: `${FADE_DURATION}ms`, zIndex: aIsTop ? 2 : 1 }}
+          >
+            <img
+              src={images[layerA.imageIndex]}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
             />
           </div>
         )}
 
-        {/* Next slide (top layer, fades in over active) */}
-        {nextIndex !== null && (
+        {/* Layer B — always mounted, never remounted */}
+        {images.length > 0 && (
           <div
-            className={`absolute inset-0 transition-opacity ${fadeIn ? 'opacity-100' : 'opacity-0'}`}
-            style={{ transitionDuration: `${FADE_DURATION}ms` }}
+            className={`absolute inset-0 transition-opacity ${!aIsTop && fading ? 'opacity-0' : aIsTop && fading ? 'opacity-100' : !aIsTop ? 'opacity-100' : 'opacity-0'}`}
+            style={{ transitionDuration: `${FADE_DURATION}ms`, zIndex: aIsTop ? 1 : 2 }}
           >
-            <div
-              key={`next-${nextIndex}`}
-              className={`absolute inset-[-20%] bg-cover bg-center ${panClass(nextIndex)}`}
-              style={{ backgroundImage: `url('${images[nextIndex]}')` }}
+            <img
+              src={images[layerB.imageIndex]}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
             />
           </div>
         )}
