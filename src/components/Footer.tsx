@@ -161,7 +161,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              © {currentYear} Elins Overnatningshave. Alle rettigheder forbeholdes.
+              © {currentYear} Elins Have. Alle rettigheder forbeholdes.
             </p>
 
             {/* Social Icons */}
