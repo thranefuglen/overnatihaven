@@ -580,6 +580,7 @@ var createGalleryImageSchema = import_zod2.z.object({
   image_url: import_zod2.z.string().optional(),
   file_path: import_zod2.z.string().optional(),
   is_active: import_zod2.z.preprocess((val) => val === "true" || val === true, import_zod2.z.boolean()).default(true),
+  show_in_hero: import_zod2.z.preprocess((val) => val === "true" || val === true, import_zod2.z.boolean()).default(false),
   sort_order: import_zod2.z.preprocess((val) => val === "" || val == null ? 0 : Number(val), import_zod2.z.number().int().min(0)).default(0)
 });
 var updateGalleryImageSchema = createGalleryImageSchema.partial();
@@ -805,7 +806,7 @@ var GalleryRepository = class {
   async getActiveImages() {
     try {
       const rows = await query(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          WHERE is_active = true
          ORDER BY sort_order ASC, created_at DESC`
@@ -817,12 +818,30 @@ var GalleryRepository = class {
     }
   }
   /**
+   * Get hero images (show_in_hero=true), falls back to active images if none selected
+   */
+  async getHeroImages() {
+    try {
+      const rows = await query(
+        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
+         FROM gallery_images
+         WHERE show_in_hero = true AND is_active = true
+         ORDER BY sort_order ASC, created_at DESC`
+      );
+      if (rows.length > 0) return rows;
+      return this.getActiveImages();
+    } catch (error) {
+      console.error("Error fetching hero images:", error);
+      throw error;
+    }
+  }
+  /**
    * Get all gallery images (including inactive) for admin
    */
   async getAllImages() {
     try {
       const rows = await query(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          ORDER BY sort_order ASC, created_at DESC`
       );
@@ -838,7 +857,7 @@ var GalleryRepository = class {
   async getImageById(id) {
     try {
       const row = await queryOne(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          WHERE id = $1`,
         [id]
@@ -887,7 +906,7 @@ var GalleryRepository = class {
    */
   async updateImage(id, imageData) {
     try {
-      const { title, description, image_url, file_path, is_active, sort_order } = imageData;
+      const { title, description, image_url, file_path, is_active, show_in_hero, sort_order } = imageData;
       const updateFields = [];
       const updateValues = [];
       let paramIndex = 1;
@@ -910,6 +929,10 @@ var GalleryRepository = class {
       if (is_active !== void 0) {
         updateFields.push(`is_active = $${paramIndex++}`);
         updateValues.push(is_active);
+      }
+      if (show_in_hero !== void 0) {
+        updateFields.push(`show_in_hero = $${paramIndex++}`);
+        updateValues.push(show_in_hero);
       }
       if (sort_order !== void 0) {
         updateFields.push(`sort_order = $${paramIndex++}`);
@@ -1084,6 +1107,27 @@ var GalleryController = class {
       res.status(500).json({
         success: false,
         message: "Kunne ikke hente billeder"
+      });
+    }
+  }
+  /**
+   * Get hero images (public endpoint)
+   */
+  async getHeroImages(_req, res) {
+    try {
+      const images = await galleryRepository.getHeroImages();
+      res.status(200).json({
+        success: true,
+        data: images,
+        count: images.length
+      });
+    } catch (error) {
+      logger.error("Error in getHeroImages controller", {
+        error: error.message
+      });
+      res.status(500).json({
+        success: false,
+        message: "Kunne ikke hente hero-billeder"
       });
     }
   }
@@ -1507,6 +1551,7 @@ function authenticateToken(req, res, next) {
 // server/routes/galleryRoutes.ts
 var router3 = (0, import_express3.Router)();
 router3.get("/", galleryController.getActiveImages.bind(galleryController));
+router3.get("/hero", galleryController.getHeroImages.bind(galleryController));
 router3.get("/admin", authenticateToken, galleryController.getAllImages.bind(galleryController));
 router3.put("/admin/reorder", authenticateToken, galleryController.reorderImages.bind(galleryController));
 router3.get("/admin/:id", authenticateToken, galleryController.getImageById.bind(galleryController));
@@ -2033,7 +2078,7 @@ var import_config = require("dotenv/config");
 var import_postgres2 = require("@vercel/postgres");
 
 // server/db/schema.postgres.sql
-var schema_postgres_default = "-- Vercel Postgres Schema\r\n-- Gallery Images Table\r\nCREATE TABLE IF NOT EXISTS gallery_images (\r\n    id SERIAL PRIMARY KEY,\r\n    title TEXT,\r\n    description TEXT,\r\n    image_url TEXT NOT NULL,\r\n    image_path TEXT,\r\n    sort_order INTEGER DEFAULT 0,\r\n    is_active BOOLEAN DEFAULT true,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_sort_order ON gallery_images(sort_order);\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_is_active ON gallery_images(is_active);\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_created_at ON gallery_images(created_at);\r\n\r\n-- Admin Users Table\r\nCREATE TABLE IF NOT EXISTS admin_users (\r\n    id SERIAL PRIMARY KEY,\r\n    username TEXT UNIQUE NOT NULL,\r\n    email TEXT,\r\n    password_hash TEXT NOT NULL,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create unique index for username\r\nCREATE UNIQUE INDEX IF NOT EXISTS idx_admin_users_username ON admin_users(username);\r\n\r\n-- Insert default admin user (password: admin123)\r\n-- Password hash: $2b$10$XWTwpMUZWNMH2hnn8./Xx.ZK79.lPklnXEiwnhUJ6hrhxrCPXiQAO\r\nINSERT INTO admin_users (username, password_hash)\r\nVALUES ('admin', '$2b$10$XWTwpMUZWNMH2hnn8./Xx.ZK79.lPklnXEiwnhUJ6hrhxrCPXiQAO')\r\nON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash;\r\n\r\n-- Inquiries Table\r\nCREATE TABLE IF NOT EXISTS inquiries (\r\n    id SERIAL PRIMARY KEY,\r\n    name TEXT NOT NULL,\r\n    email TEXT NOT NULL,\r\n    phone TEXT,\r\n    arrival_date DATE NOT NULL,\r\n    departure_date DATE NOT NULL,\r\n    num_people INTEGER NOT NULL,\r\n    message TEXT,\r\n    status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'confirmed', 'declined', 'completed')),\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for inquiries\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_status ON inquiries(status);\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_dates ON inquiries(arrival_date, departure_date);\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_created_at ON inquiries(created_at);\r\n\r\n-- Contacts Table\r\nCREATE TABLE IF NOT EXISTS contacts (\r\n    id SERIAL PRIMARY KEY,\r\n    name TEXT NOT NULL,\r\n    email TEXT NOT NULL,\r\n    subject TEXT,\r\n    message TEXT NOT NULL,\r\n    is_read BOOLEAN DEFAULT false,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for contacts\r\nCREATE INDEX IF NOT EXISTS idx_contacts_is_read ON contacts(is_read);\r\nCREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at);\r\n\r\n-- Facilities Table\r\nCREATE TABLE IF NOT EXISTS facilities (\r\n    id SERIAL PRIMARY KEY,\r\n    title TEXT NOT NULL,\r\n    description TEXT,\r\n    icon_name TEXT NOT NULL,\r\n    is_active BOOLEAN DEFAULT true,\r\n    sort_order INTEGER DEFAULT 0,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for facilities\r\nCREATE INDEX IF NOT EXISTS idx_facilities_sort_order ON facilities(sort_order);\r\nCREATE INDEX IF NOT EXISTS idx_facilities_is_active ON facilities(is_active);\r\n\r\n-- Remove duplicate facilities before adding unique index\r\nDELETE FROM facilities WHERE id NOT IN (SELECT MIN(id) FROM facilities GROUP BY title);\r\n\r\n-- Add unique index on title to prevent duplicates from repeated migrations\r\nCREATE UNIQUE INDEX IF NOT EXISTS idx_facilities_title_unique ON facilities(title);\r\n\r\n-- Seed initial facilities\r\nINSERT INTO facilities (title, description, icon_name, is_active, sort_order)\r\nVALUES\r\n    ('Toilet & Bad', 'Adgang til toilet og brusebad i forbindelse med overnatningen', 'Home', true, 1),\r\n    ('Str\xF8m', 'Mulighed for at oplade telefon og cykellygter', 'Zap', true, 2),\r\n    ('K\xF8kkenadgang', 'Mulighed for at tilberede let mad og drikke', 'UtensilsCrossed', true, 3),\r\n    ('WiFi', 'Gratis tr\xE5dl\xF8st internet i hele haven', 'Wifi', true, 4),\r\n    ('Sikkert Omr\xE5de', 'Privat og sikkert omr\xE5de til parkering af cykler', 'ShieldCheck', true, 5),\r\n    ('Udend\xF8rs Lys', 'God belysning i haven om aftenen', 'Moon', true, 6),\r\n    ('F\xE6lles Opholdsrum', 'Hyggeligt omr\xE5de at m\xF8de andre cyklister', 'Users', true, 7),\r\n    ('Kort & Vejledning', 'Hj\xE6lp til at planl\xE6gge din videre rute', 'Map', true, 8)\r\nON CONFLICT (title) DO NOTHING;\r\n\r\n-- Remove duplicate gallery images before adding unique index\r\nDELETE FROM gallery_images WHERE id NOT IN (SELECT MIN(id) FROM gallery_images GROUP BY image_url);\r\n\r\n-- Add unique index on image_url to prevent duplicates from repeated migrations\r\nCREATE UNIQUE INDEX IF NOT EXISTS idx_gallery_images_url_unique ON gallery_images(image_url);\r\n\r\n-- Insert sample gallery images\r\nINSERT INTO gallery_images (title, description, image_url, sort_order, is_active)\r\nVALUES\r\n    ('Telt i haven', 'Smukt telt omgivet af gr\xF8nne tr\xE6er og blomster', 'https://images.unsplash.com/photo-1523987351232-1ca2c5be4eb5?w=800&h=600&fit=crop', 1, true),\r\n    ('Camping plads', 'Rummelig camping plads med god plads til flere telte', 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop', 2, true),\r\n    ('Haven ved solnedgang', 'Den smukke have ved solnedgangstidspunkt', 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&h=600&fit=crop', 3, true),\r\n    ('B\xE5lplads', 'Hyggelig b\xE5lplads til sociale aftener', 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&h=600&fit=crop', 4, true),\r\n    ('Faciliteter', 'Rene og velholdte faciliteter for g\xE6ster', 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop', 5, true),\r\n    ('Natursti', 'Smuk natursti i n\xE6rheden af campingpladsen', 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop', 6, true)\r\nON CONFLICT (image_url) DO NOTHING;\r\n";
+var schema_postgres_default = "-- Vercel Postgres Schema\r\n-- Gallery Images Table\r\nCREATE TABLE IF NOT EXISTS gallery_images (\r\n    id SERIAL PRIMARY KEY,\r\n    title TEXT,\r\n    description TEXT,\r\n    image_url TEXT NOT NULL,\r\n    image_path TEXT,\r\n    sort_order INTEGER DEFAULT 0,\r\n    is_active BOOLEAN DEFAULT true,\r\n    show_in_hero BOOLEAN DEFAULT false,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_sort_order ON gallery_images(sort_order);\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_is_active ON gallery_images(is_active);\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_created_at ON gallery_images(created_at);\r\n\r\n-- Admin Users Table\r\nCREATE TABLE IF NOT EXISTS admin_users (\r\n    id SERIAL PRIMARY KEY,\r\n    username TEXT UNIQUE NOT NULL,\r\n    email TEXT,\r\n    password_hash TEXT NOT NULL,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create unique index for username\r\nCREATE UNIQUE INDEX IF NOT EXISTS idx_admin_users_username ON admin_users(username);\r\n\r\n-- Insert default admin user (password: admin123)\r\n-- Password hash: $2b$10$XWTwpMUZWNMH2hnn8./Xx.ZK79.lPklnXEiwnhUJ6hrhxrCPXiQAO\r\nINSERT INTO admin_users (username, password_hash)\r\nVALUES ('admin', '$2b$10$XWTwpMUZWNMH2hnn8./Xx.ZK79.lPklnXEiwnhUJ6hrhxrCPXiQAO')\r\nON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash;\r\n\r\n-- Inquiries Table\r\nCREATE TABLE IF NOT EXISTS inquiries (\r\n    id SERIAL PRIMARY KEY,\r\n    name TEXT NOT NULL,\r\n    email TEXT NOT NULL,\r\n    phone TEXT,\r\n    arrival_date DATE NOT NULL,\r\n    departure_date DATE NOT NULL,\r\n    num_people INTEGER NOT NULL,\r\n    message TEXT,\r\n    status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'confirmed', 'declined', 'completed')),\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for inquiries\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_status ON inquiries(status);\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_dates ON inquiries(arrival_date, departure_date);\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_created_at ON inquiries(created_at);\r\n\r\n-- Contacts Table\r\nCREATE TABLE IF NOT EXISTS contacts (\r\n    id SERIAL PRIMARY KEY,\r\n    name TEXT NOT NULL,\r\n    email TEXT NOT NULL,\r\n    subject TEXT,\r\n    message TEXT NOT NULL,\r\n    is_read BOOLEAN DEFAULT false,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for contacts\r\nCREATE INDEX IF NOT EXISTS idx_contacts_is_read ON contacts(is_read);\r\nCREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at);\r\n\r\n-- Facilities Table\r\nCREATE TABLE IF NOT EXISTS facilities (\r\n    id SERIAL PRIMARY KEY,\r\n    title TEXT NOT NULL,\r\n    description TEXT,\r\n    icon_name TEXT NOT NULL,\r\n    is_active BOOLEAN DEFAULT true,\r\n    sort_order INTEGER DEFAULT 0,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for facilities\r\nCREATE INDEX IF NOT EXISTS idx_facilities_sort_order ON facilities(sort_order);\r\nCREATE INDEX IF NOT EXISTS idx_facilities_is_active ON facilities(is_active);\r\n\r\n-- Remove duplicate facilities before adding unique index\r\nDELETE FROM facilities WHERE id NOT IN (SELECT MIN(id) FROM facilities GROUP BY title);\r\n\r\n-- Add unique index on title to prevent duplicates from repeated migrations\r\nCREATE UNIQUE INDEX IF NOT EXISTS idx_facilities_title_unique ON facilities(title);\r\n\r\n-- Seed initial facilities\r\nINSERT INTO facilities (title, description, icon_name, is_active, sort_order)\r\nVALUES\r\n    ('Toilet & Bad', 'Adgang til toilet og brusebad i forbindelse med overnatningen', 'Home', true, 1),\r\n    ('Str\xF8m', 'Mulighed for at oplade telefon og cykellygter', 'Zap', true, 2),\r\n    ('K\xF8kkenadgang', 'Mulighed for at tilberede let mad og drikke', 'UtensilsCrossed', true, 3),\r\n    ('WiFi', 'Gratis tr\xE5dl\xF8st internet i hele haven', 'Wifi', true, 4),\r\n    ('Sikkert Omr\xE5de', 'Privat og sikkert omr\xE5de til parkering af cykler', 'ShieldCheck', true, 5),\r\n    ('Udend\xF8rs Lys', 'God belysning i haven om aftenen', 'Moon', true, 6),\r\n    ('F\xE6lles Opholdsrum', 'Hyggeligt omr\xE5de at m\xF8de andre cyklister', 'Users', true, 7),\r\n    ('Kort & Vejledning', 'Hj\xE6lp til at planl\xE6gge din videre rute', 'Map', true, 8)\r\nON CONFLICT (title) DO NOTHING;\r\n\r\n-- Remove duplicate gallery images before adding unique index\r\nDELETE FROM gallery_images WHERE id NOT IN (SELECT MIN(id) FROM gallery_images GROUP BY image_url);\r\n\r\n-- Add show_in_hero column if it doesn't exist (migration for existing databases)\r\nALTER TABLE gallery_images ADD COLUMN IF NOT EXISTS show_in_hero BOOLEAN DEFAULT false;\r\n\r\n-- Add unique index on image_url to prevent duplicates from repeated migrations\r\nCREATE UNIQUE INDEX IF NOT EXISTS idx_gallery_images_url_unique ON gallery_images(image_url);\r\n\r\n-- No sample gallery images \u2014 all images are managed via the admin panel\r\n";
 
 // server/db/migrate.ts
 async function runMigrations() {
