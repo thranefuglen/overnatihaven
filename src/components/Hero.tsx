@@ -151,41 +151,42 @@ const Hero = () => {
 
       {/* Content */}
       <div className="relative z-20 section-container text-center text-white">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-          Velkommen til
-          <br />
-          <span className="text-primary-200">Elins Have</span>
-        </h1>
-        <p className="text-xl sm:text-2xl md:text-3xl mb-8 text-primary-50 max-w-3xl mx-auto">
-          En smuk og fredelig oase for cyklister på eventyr
-        </p>
-        <p className="text-lg sm:text-xl mb-12 text-white/90 max-w-2xl mx-auto">
-          Sæt dit telt op i naturskønne omgivelser og nyd en velfortjent pause på din cykeltur gennem
-          Danmark.
-        </p>
+        <div className="inline-block bg-black/40 backdrop-blur-sm rounded-2xl px-8 py-10 sm:px-12 sm:py-12">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+            Velkommen til
+            <br />
+            <span className="text-primary-200">Elins Have</span>
+          </h1>
+          <p className="text-xl sm:text-2xl md:text-3xl mb-8 text-primary-50 max-w-3xl mx-auto">
+            En smuk og fredelig oase for cyklister på eventyr
+          </p>
+          <p className="text-lg sm:text-xl mb-12 text-white/90 max-w-2xl mx-auto">
+            Sæt dit telt op i naturskønne omgivelser og nyd en velfortjent pause på din cykeltur gennem
+            Danmark.
+          </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button onClick={scrollToContact} className="btn-primary text-lg px-8 py-4">
-            Book din overnatning
-          </button>
-          <a
-            href="#about"
-            onClick={(e) => {
-              e.preventDefault()
-              const element = document.querySelector('#about')
-              if (element) {
-                element.scrollIntoView({ behavior: 'smooth' })
-              }
-            }}
-            className="btn-secondary text-lg px-8 py-4"
-          >
-            Læs mere
-          </a>
-        </div>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button onClick={scrollToContact} className="btn-primary text-lg px-8 py-4">
+              Book din overnatning
+            </button>
+            <a
+              href="#about"
+              onClick={(e) => {
+                e.preventDefault()
+                const element = document.querySelector('#about')
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' })
+                }
+              }}
+              className="btn-secondary text-lg px-8 py-4"
+            >
+              Læs mere
+            </a>
+          </div>
 
-        {/* Features */}
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          {/* Features */}
+          <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
           <div className="flex flex-col items-center">
             <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mb-4">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -229,6 +230,7 @@ const Hero = () => {
             </div>
             <h3 className="text-lg font-semibold mb-2">Varm Velkomst</h3>
             <p className="text-white/80">Personlig og hjertelig modtagelse fra Elin</p>
+          </div>
           </div>
         </div>
 

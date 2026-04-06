@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Vite Frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    },
+    {
+      "name": "Express Backend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:backend"],
+      "port": 3000
+    },
+    {
+      "name": "Full Stack (concurrent)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:full"],
+      "port": 5173
+    }
+  ]
+}
