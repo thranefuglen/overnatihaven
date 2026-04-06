@@ -1,6 +1,6 @@
-# Elins Overnatningshave
+# Elins Have
 
-En hjemmeside og API til Elins overnatningshave, hvor cyklister kan booke overnatning i en smuk have i Ribe.
+En hjemmeside og API til Elins Have, hvor cyklister kan booke overnatning i en smuk have i Ribe.
 
 ## Tech Stack
 

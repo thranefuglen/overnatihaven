@@ -1,6 +1,6 @@
 # Server Directory
 
-Dette directory indeholder al backend kode til Elins Overnatningshave.
+Dette directory indeholder al backend kode til Elins Have.
 
 ## 📁 Struktur
 

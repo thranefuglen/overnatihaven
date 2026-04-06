@@ -139,7 +139,7 @@ const Hero = () => {
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
           Velkommen til
           <br />
-          <span className="text-primary-200">Elins Overnatningshave</span>
+          <span className="text-primary-200">Elins Have</span>
         </h1>
         <p className="text-xl sm:text-2xl md:text-3xl mb-8 text-primary-50 max-w-3xl mx-auto">
           En smuk og fredelig oase for cyklister på eventyr

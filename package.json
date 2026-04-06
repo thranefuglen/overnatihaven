@@ -1,7 +1,7 @@
 {
   "name": "overnatihaven",
   "version": "1.0.0",
-  "description": "Website for Elins overnatningshave - camping in a beautiful garden",
+  "description": "Website for Elins Have - camping in a beautiful garden",
   "main": "index.js",
   "scripts": {
     "dev": "vite",

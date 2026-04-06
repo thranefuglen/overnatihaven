@@ -80,7 +80,7 @@ class EmailService {
       const mailOptions = {
         from: config.email.from,
         to: email,
-        subject: 'Tak for din forespørgsel - Elins Overnatningshave',
+        subject: 'Tak for din forespørgsel - Elins Have',
         html: `
           <h2>Tak for din forespørgsel</h2>
           <p>Kære ${name},</p>

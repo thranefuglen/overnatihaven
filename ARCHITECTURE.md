@@ -1,6 +1,6 @@
 # System Arkitektur
 
-Visuel guide til backend arkitekturen for Elins Overnatningshave.
+Visuel guide til backend arkitekturen for Elins Have.
 
 ## 🏛️ High-Level Arkitektur
 

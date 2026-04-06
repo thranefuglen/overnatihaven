@@ -346,7 +346,7 @@ var EmailService = class {
       const mailOptions = {
         from: config.email.from,
         to: email,
-        subject: "Tak for din foresp\xF8rgsel - Elins Overnatningshave",
+        subject: "Tak for din foresp\xF8rgsel - Elins Have",
         html: `
           <h2>Tak for din foresp\xF8rgsel</h2>
           <p>K\xE6re ${name},</p>
