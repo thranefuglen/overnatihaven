@@ -121,8 +121,8 @@ const FacilitiesAdmin: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Faciliteter Administration</h2>
-            <p className="mt-1 text-sm text-gray-600">Administrer faciliteter der vises på forsiden</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Faciliteter Administration</h2>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Administrer faciliteter der vises på forsiden</p>
           </div>
           <button
             onClick={() => { setEditingFacility(null); setShowModal(true) }}
@@ -137,15 +137,15 @@ const FacilitiesAdmin: React.FC = () => {
       </div>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded">
           {error}
         </div>
       )}
 
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
+      <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           {facilities.length === 0 ? (
-            <li className="px-6 py-4 text-center text-gray-500">Ingen faciliteter fundet</li>
+            <li className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">Ingen faciliteter fundet</li>
           ) : (
             facilities.map((facility, index) => (
               <li
@@ -154,27 +154,27 @@ const FacilitiesAdmin: React.FC = () => {
                 onDragStart={(e) => handleDragStart(e, index)}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, index)}
-                className="px-6 py-4 hover:bg-gray-50 cursor-move transition-colors"
+                className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-move transition-colors"
               >
                 <div className="flex items-center space-x-4">
                   {/* Drag handle */}
                   <div className="flex-shrink-0 cursor-grab active:cursor-grabbing">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                   </div>
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900">{facility.title}</p>
-                    <p className="text-sm text-gray-500">{facility.description || 'Ingen beskrivelse'}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{facility.title}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{facility.description || 'Ingen beskrivelse'}</p>
                     <div className="flex items-center mt-1 space-x-4">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        facility.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        facility.is_active ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
                       }`}>
                         {facility.is_active ? 'Aktiv' : 'Inaktiv'}
                       </span>
-                      <span className="text-xs text-gray-400">Ikon: {facility.icon_name}</span>
+                      <span className="text-xs text-gray-400 dark:text-gray-500">Ikon: {facility.icon_name}</span>
                     </div>
                   </div>
 
@@ -306,64 +306,64 @@ const FacilityModal: React.FC<FacilityModalProps> = ({ facility, onClose, onSucc
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen px-4">
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75" onClick={onClose} />
-        <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-80" onClick={onClose} />
+        <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             {facility ? 'Rediger facilitet' : 'Ny facilitet'}
           </h3>
 
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+            <div className="mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded text-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Titel *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Titel *</label>
               <input
                 type="text"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="Facilitets titel"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Beskrivelse</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Beskrivelse</label>
               <textarea
                 value={description}
                 onChange={e => setDescription(e.target.value)}
                 rows={2}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="Kort beskrivelse"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ikon *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ikon *</label>
               <div className="flex items-center space-x-3 mb-2">
-                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center text-primary-600">
+                <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center text-primary-600 dark:text-primary-400">
                   <IconPreview name={selectedIcon} />
                 </div>
-                <span className="text-sm text-gray-600">Valgt: {selectedIcon}</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Valgt: {selectedIcon}</span>
               </div>
               <input
                 type="text"
                 value={iconSearch}
                 onChange={e => setIconSearch(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 mb-2"
+                className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 mb-2"
                 placeholder="Søg ikon..."
               />
-              <div className="grid grid-cols-8 gap-1 max-h-40 overflow-y-auto border border-gray-200 rounded-md p-2">
+              <div className="grid grid-cols-8 gap-1 max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded-md p-2 dark:bg-gray-700">
                 {filteredIcons.map(icon => (
                   <button
                     key={icon}
                     type="button"
                     onClick={() => setSelectedIcon(icon)}
-                    className={`p-2 rounded hover:bg-gray-100 flex items-center justify-center ${
-                      selectedIcon === icon ? 'bg-primary-100 text-primary-600' : 'text-gray-600'
+                    className={`p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center ${
+                      selectedIcon === icon ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400'
                     }`}
                     title={icon}
                   >
@@ -377,7 +377,7 @@ const FacilityModal: React.FC<FacilityModalProps> = ({ facility, onClose, onSucc
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 Annuller
               </button>

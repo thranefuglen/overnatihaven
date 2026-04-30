@@ -106,6 +106,18 @@ const Contact = () => {
                     <p className="text-gray-600 dark:text-gray-300 mt-1">Mejerivej 3, Gredsted</p>
                     <p className="text-gray-600 dark:text-gray-300">6771 Gredstedbro</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Danmark</p>
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=Mejerivej+3,+6771+Gredstedbro"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Åbn i Google Maps"
+                      className="inline-flex items-center mt-2 text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors"
+                    >
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      Åbn i Google Maps
+                    </a>
                   </div>
                 </div>
               </div>

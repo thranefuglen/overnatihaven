@@ -50,6 +50,15 @@ const LocationMap = ({
               <strong className="block font-semibold">{city}</strong>
               {address && <span className="text-sm">{address}</span>}
               {postalCode && <span className="text-sm block">{postalCode} {city}</span>}
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Mejerivej+3,+6771+Gredstedbro"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Åbn i Google Maps"
+                className="inline-block mt-2 text-xs text-blue-600 hover:text-blue-800 underline"
+              >
+                Åbn i Google Maps
+              </a>
             </div>
           </Popup>
         </Marker>

@@ -76,15 +76,15 @@ const InquiriesAdmin: React.FC = () => {
   const getStatusColor = (status: Inquiry['status']) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400'
       case 'confirmed':
-        return 'bg-green-100 text-green-800'
+        return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
       case 'declined':
-        return 'bg-red-100 text-red-800'
+        return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
       case 'completed':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
     }
   }
 
@@ -117,8 +117,8 @@ const InquiriesAdmin: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Forespørgsler</h2>
-            <p className="mt-1 text-sm text-gray-600">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Forespørgsler</h2>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
               Administrer booking forespørgsler
             </p>
           </div>
@@ -126,29 +126,29 @@ const InquiriesAdmin: React.FC = () => {
       </div>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded">
           {error}
         </div>
       )}
 
       {/* Inquiries List */}
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
+      <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           {inquiries.length === 0 ? (
-            <li className="px-6 py-4 text-center text-gray-500">
+            <li className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
               Ingen forespørgsler fundet
             </li>
           ) : (
             inquiries.map((inquiry) => (
-              <li key={inquiry.id} className="px-6 py-4 hover:bg-gray-50">
+              <li key={inquiry.id} className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
                           {inquiry.name}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           {inquiry.email}
                         </p>
                       </div>
@@ -157,7 +157,7 @@ const InquiriesAdmin: React.FC = () => {
                       </span>
                     </div>
                     
-                    <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500">
+                    <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500 dark:text-gray-400">
                       <div>
                         <span className="font-medium">Ankomst:</span>
                         <p>{new Date(inquiry.arrival_date).toLocaleDateString('da-DK')}</p>
@@ -178,13 +178,13 @@ const InquiriesAdmin: React.FC = () => {
                     
                     {inquiry.message && (
                       <div className="mt-2">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
                           <span className="font-medium">Besked:</span> {inquiry.message}
                         </p>
                       </div>
                     )}
                     
-                    <div className="mt-2 text-xs text-gray-400">
+                    <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
                       Oprettet: {new Date(inquiry.created_at).toLocaleDateString('da-DK')}
                     </div>
                   </div>
@@ -193,7 +193,7 @@ const InquiriesAdmin: React.FC = () => {
                     <select
                       value={inquiry.status}
                       onChange={(e) => handleStatusUpdate(inquiry.id, e.target.value as Inquiry['status'])}
-                      className="text-sm border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                      className="text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-primary-500 focus:border-primary-500"
                     >
                       <option value="pending">Afventer</option>
                       <option value="confirmed">Bekræftet</option>

@@ -107,8 +107,8 @@ const ContactsAdmin: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Kontaktbeskeder</h2>
-            <p className="mt-1 text-sm text-gray-600">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Kontaktbeskeder</h2>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
               Administrer beskeder fra kontaktformularen
             </p>
           </div>
@@ -116,34 +116,34 @@ const ContactsAdmin: React.FC = () => {
       </div>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded">
           {error}
         </div>
       )}
 
       {/* Contacts List */}
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
+      <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           {contacts.length === 0 ? (
-            <li className="px-6 py-4 text-center text-gray-500">
+            <li className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
               Ingen beskeder fundet
             </li>
           ) : (
             contacts.map((contact) => (
-              <li key={contact.id} className="px-6 py-4 hover:bg-gray-50">
+              <li key={contact.id} className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
                           {contact.name}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           {contact.email}
                         </p>
                       </div>
                       {contact.is_read === 0 && (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400">
                           Ny
                         </span>
                       )}
@@ -151,19 +151,19 @@ const ContactsAdmin: React.FC = () => {
                     
                     {contact.subject && (
                       <div className="mt-2">
-                        <p className="text-sm font-medium text-gray-700">
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                           Emne: {contact.subject}
                         </p>
                       </div>
                     )}
                     
                     <div className="mt-2">
-                      <p className="text-sm text-gray-600 whitespace-pre-wrap">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
                         {contact.message}
                       </p>
                     </div>
                     
-                    <div className="mt-2 text-xs text-gray-400">
+                    <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
                       Modtaget: {new Date(contact.created_at).toLocaleDateString('da-DK')} kl. {new Date(contact.created_at).toLocaleTimeString('da-DK')}
                     </div>
                   </div>
