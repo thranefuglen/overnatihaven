@@ -196,8 +196,8 @@ const GalleryAdmin: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Galleri Administration</h2>
-            <p className="mt-1 text-sm text-gray-600">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Galleri Administration</h2>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
               Administrer billeder i galleriet
             </p>
           </div>
@@ -224,16 +224,16 @@ const GalleryAdmin: React.FC = () => {
       </div>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded">
           {error}
         </div>
       )}
 
       {/* Images Grid */}
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
+      <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           {images.length === 0 ? (
-            <li className="px-6 py-4 text-center text-gray-500">
+            <li className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
               Ingen billeder fundet
             </li>
           ) : (
@@ -244,13 +244,13 @@ const GalleryAdmin: React.FC = () => {
                 onDragStart={(e) => handleDragStart(e, index)}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, index)}
-                className="px-6 py-4 hover:bg-gray-50 cursor-move transition-colors"
+                className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-move transition-colors"
               >
                 <div className="flex items-center space-x-4">
                   {/* Drag handle */}
                   <div className="flex-shrink-0 cursor-grab active:cursor-grabbing">
                     <svg
-                      className="h-5 w-5 text-gray-400"
+                      className="h-5 w-5 text-gray-400 dark:text-gray-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -275,26 +275,26 @@ const GalleryAdmin: React.FC = () => {
 
                   {/* Image info */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                       {image.title}
                     </p>
-                    <p className="text-sm text-gray-500 truncate">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                       {image.description || 'Ingen beskrivelse'}
                     </p>
                     <div className="flex items-center mt-1 space-x-4">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         image.is_active
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
+                          ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
                       }`}>
                         {image.is_active ? 'Aktiv' : 'Inaktiv'}
                       </span>
                       {image.show_in_hero && (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400">
                           Hero
                         </span>
                       )}
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         Rækkefølge: {image.sort_order}
                       </span>
                     </div>
