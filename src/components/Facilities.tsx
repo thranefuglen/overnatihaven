@@ -74,7 +74,27 @@ const Facilities = () => {
                 </li>
                 <li className="flex items-start">
                   <LucideIcons.Check className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0" />
-                  <span>Kæledyr tilladt efter aftale</span>
+                  <span>Hund i snor er tilladt</span>
+                </li>
+                <li className="flex items-start">
+                  <LucideIcons.MapPin className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0" />
+                  <span>Haven ligger 1,5 km nord for Gredstedbro, hvor der er togstation, indkøbsmuligheder, pizzeria og hotel med restaurant</span>
+                </li>
+                <li className="flex items-start">
+                  <LucideIcons.Navigation className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0" />
+                  <span>Afstand til Ribe (10 km), Bramming (10 km) og Esbjerg (20 km)</span>
+                </li>
+                <li className="flex items-start">
+                  <LucideIcons.Bike className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0" />
+                  <span>Cykelrute 10 &amp; 11 går næsten lige forbi</span>
+                </li>
+                <li className="flex items-start">
+                  <LucideIcons.AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400 mr-3 flex-shrink-0" />
+                  <span>Færdsel i haven er på eget ansvar</span>
+                </li>
+                <li className="flex items-start">
+                  <LucideIcons.AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400 mr-3 flex-shrink-0" />
+                  <span>Haven er desværre ikke handicapvenlig</span>
                 </li>
               </ul>
             </div>
@@ -91,11 +111,11 @@ const Facilities = () => {
                 </li>
                 <li className="flex items-start">
                   <LucideIcons.Check className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0" />
-                  <span>Rygning kun i udpegede områder</span>
+                  <span>Rygning tilladt udendørs, hvor der er askebæger</span>
                 </li>
                 <li className="flex items-start">
                   <LucideIcons.Check className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0" />
-                  <span>Efterlad haven som du fandt den</span>
+                  <span>Efterlad haven og faciliteter som du fandt dem</span>
                 </li>
               </ul>
             </div>

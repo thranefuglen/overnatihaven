@@ -24,12 +24,12 @@ interface LocationMapProps {
 }
 
 const LocationMap = ({
-  address = "Ribe",
-  city = "Ribe",
-  postalCode = "6760"
+  address = "Mejerivej 3, Gredsted",
+  city = "Gredstedbro",
+  postalCode = "6771"
 }: LocationMapProps) => {
-  // Coordinates for Ribe, Denmark
-  const position: [number, number] = [55.3278, 8.7636]
+  // Coordinates for Mejerivej 3, Gredsted, 6771 Gredstedbro
+  const position: [number, number] = [55.4178, 8.7745]
 
   return (
     <div className="h-full min-h-96 w-full">

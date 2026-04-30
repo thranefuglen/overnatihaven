@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import DarkModeToggle from './DarkModeToggle'
 
 interface HeaderProps {
   currentSection: string
@@ -93,12 +92,10 @@ const Header = ({ currentSection, setCurrentSection }: HeaderProps) => {
                 {item.label}
               </a>
             ))}
-            <DarkModeToggle />
           </div>
 
-          {/* Mobile menu button and dark mode toggle */}
+          {/* Mobile menu button */}
           <div className="flex md:hidden items-center space-x-2">
-            <DarkModeToggle />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500"

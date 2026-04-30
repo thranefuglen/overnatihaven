@@ -10,13 +10,14 @@ const About = () => {
             </h2>
             <div className="space-y-4 text-lg text-gray-700 dark:text-gray-300">
               <p>
-                Velkommen til min smukke have, hvor cyklister kan finde ro og hvile efter en lang dag på
-                sadlen. Mit navn er Elin, og jeg elsker at åbne min have for eventyrere på to hjul.
+                Velkommen til min store have, hvor cyklister og vandrere kan finde ro og hvile efter en lang dag på
+                farten. Mit navn er Elin, og jeg elsker at åbne min have for overnattende gæster. 
+              
               </p>
               <p>
-                Haven er omgivet af naturskønne omgivelser, og der er masser af plads til at sætte dit
-                telt op. Jeg har gennem årene haft fornøjelsen af at møde cyklister fra hele verden, og
-                hver gang er det en glæde at dele min lille oase med andre naturelskere.
+                Teltet kan slås mellem frugttræer og vilde bede og der er rig lejlighed til at nyde
+                 den skønne have med masser af siddepladser. Gæster er meget velkommen til at plukke af 
+                 havens frugter, bær og smage på årstidens grøntsager. Shelter er placeret tilbagetrukken i haven.
               </p>
               <p>
                 Uanset om du er på en lang cykeltur gennem Danmark eller bare har brug for et roligt sted
