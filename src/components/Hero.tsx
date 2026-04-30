@@ -158,10 +158,10 @@ const Hero = () => {
             <span className="text-primary-200">Elins Have</span>
           </h1>
           <p className="text-xl sm:text-2xl md:text-3xl mb-8 text-primary-50 max-w-3xl mx-auto">
-            En smuk og fredelig oase for cyklister på eventyr
+            En smuk og fredelig oase for cyklister og vandrende på farten
           </p>
           <p className="text-lg sm:text-xl mb-12 text-white/90 max-w-2xl mx-auto">
-            Sæt dit telt op i naturskønne omgivelser og nyd en velfortjent pause på din cykeltur gennem
+            Sæt dit telt op eller lej vores shelter, i naturskønne omgivelser og nyd en velfortjent pause på din tur gennem
             Danmark.
           </p>
 

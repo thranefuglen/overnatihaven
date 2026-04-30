@@ -24,14 +24,14 @@ const Contact = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="tel:+4512345678"
+                href="tel:+4551334575"
                 className="btn-primary inline-flex items-center justify-center"
               >
                 <PhoneIcon className="w-5 h-5 mr-2" />
                 Ring til Elin
               </a>
               <a
-                href="mailto:elin@overnatihaven.dk"
+                href="mailto:elinogpalle@bbsyd.dk"
                 className="btn-secondary inline-flex items-center justify-center"
               >
                 <EmailIcon className="w-5 h-5 mr-2" />
@@ -47,12 +47,29 @@ const Contact = () => {
               <div className="space-y-6">
                 <div className="flex items-start">
                   <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <h4 className="font-semibold text-gray-900 dark:text-white">Åbningstider</h4>
+                    <p className="text-gray-600 dark:text-gray-300 mt-1">Sæson 2026</p>
+                    <p className="text-gray-600 dark:text-gray-300">1. juni – 1. september</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
                     <PhoneIcon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                   </div>
                   <div className="ml-4">
                     <h4 className="font-semibold text-gray-900 dark:text-white">Telefon</h4>
-                    <p className="text-gray-600 dark:text-gray-300 mt-1">+45 12 34 56 78</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Hverdage kl. 9-18, weekend kl. 10-16</p>
+                    <p className="text-gray-600 dark:text-gray-300 mt-1">+45 51 33 45 75</p>
                   </div>
                 </div>
 
@@ -62,7 +79,7 @@ const Contact = () => {
                   </div>
                   <div className="ml-4">
                     <h4 className="font-semibold text-gray-900 dark:text-white">Email</h4>
-                    <p className="text-gray-600 dark:text-gray-300 mt-1">elin@overnatihaven.dk</p>
+                    <p className="text-gray-600 dark:text-gray-300 mt-1">elinogpalle@bbsyd.dk</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Svar inden for 24 timer</p>
                   </div>
                 </div>
@@ -86,8 +103,8 @@ const Contact = () => {
                   </div>
                   <div className="ml-4">
                     <h4 className="font-semibold text-gray-900 dark:text-white">Adresse</h4>
-                    <p className="text-gray-600 dark:text-gray-300 mt-1">Ribe</p>
-                    <p className="text-gray-600 dark:text-gray-300">6760 Ribe</p>
+                    <p className="text-gray-600 dark:text-gray-300 mt-1">Mejerivej 3, Gredsted</p>
+                    <p className="text-gray-600 dark:text-gray-300">6771 Gredstedbro</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Danmark</p>
                   </div>
                 </div>
@@ -97,9 +114,9 @@ const Contact = () => {
             {/* Map - Right Side */}
             <div className="card overflow-hidden h-full">
               <LocationMap
-                address="Ribe"
-                city="Ribe"
-                postalCode="6760"
+                address="Mejerivej 3, Gredsted"
+                city="Gredstedbro"
+                postalCode="6771"
               />
             </div>
           </div>

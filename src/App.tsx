@@ -1,7 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
-import { ThemeProvider } from './contexts/ThemeContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminLayout from './components/AdminLayout'
 import Login from './components/Login'
@@ -20,27 +19,25 @@ import Footer from './components/Footer'
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Router>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/*" element={<PublicApp />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/*" element={<PublicApp />} />
 
-            {/* Admin routes */}
-            <Route path="/admin/login" element={<Login />} />
-            <Route
-              path="/admin/*"
-              element={
-                <ProtectedRoute>
-                  <AdminRoutes />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+          {/* Admin routes */}
+          <Route path="/admin/login" element={<Login />} />
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute>
+                <AdminRoutes />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
   )
 }
 
