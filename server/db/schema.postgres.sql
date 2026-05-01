@@ -93,9 +93,12 @@ DELETE FROM facilities WHERE id NOT IN (SELECT MIN(id) FROM facilities GROUP BY 
 -- Add unique index on title to prevent duplicates from repeated migrations
 CREATE UNIQUE INDEX IF NOT EXISTS idx_facilities_title_unique ON facilities(title);
 
--- Seed initial facilities
+-- Seed initial facilities ONLY if the table is empty.
+-- This preserves user deletions: når brugeren har slettet en facilitet i admin,
+-- må migrationen ikke genoprette den ved næste deploy.
 INSERT INTO facilities (title, description, icon_name, is_active, sort_order)
-VALUES
+SELECT v.title, v.description, v.icon_name, v.is_active, v.sort_order
+FROM (VALUES
     ('Toilet & Bad', 'Adgang til toilet og brusebad i forbindelse med overnatningen', 'Home', true, 1),
     ('Strøm', 'Mulighed for at oplade telefon og cykellygter', 'Zap', true, 2),
     ('Køkkenadgang', 'Mulighed for at tilberede let mad og drikke', 'UtensilsCrossed', true, 3),
@@ -104,6 +107,8 @@ VALUES
     ('Udendørs Lys', 'God belysning i haven om aftenen', 'Moon', true, 6),
     ('Fælles Opholdsrum', 'Hyggeligt område at møde andre cyklister', 'Users', true, 7),
     ('Kort & Vejledning', 'Hjælp til at planlægge din videre rute', 'Map', true, 8)
+) AS v(title, description, icon_name, is_active, sort_order)
+WHERE NOT EXISTS (SELECT 1 FROM facilities)
 ON CONFLICT (title) DO NOTHING;
 
 -- Remove duplicate gallery images before adding unique index
