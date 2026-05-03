@@ -17,7 +17,7 @@ test.describe('Admin dark mode', () => {
   test('sidebar har dark mode baggrund efter login', async ({ page }) => {
     await page.goto('/admin/login');
     await page.fill('#username', 'admin');
-    await page.fill('#password', 'admin123');
+    await page.fill('#password', 'Susi2010');
     await page.click('button[type="submit"]');
 
     await expect(page).toHaveURL(/\/admin/);
