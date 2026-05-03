@@ -39,7 +39,7 @@ Målet er at en agent (eller udvikler) kan køre `npm run test:e2e` lokalt mod d
 - Nyt endpoint: `POST /api/test/reset`
 - Kun tilgængeligt når `NODE_ENV=test` — returnerer 404 i alle andre miljøer
 - Sletter alt data i tabellerne: `inquiries`, `contacts`, `gallery_images`, `facilities`
-- Genindsætter seed-data fra `schema.postgres.sql` (admin-bruger med `admin/admin123`, standard-faciliteter, eksempel-galleribilleder)
+- Genindsætter seed-data fra `schema.postgres.sql` (admin-bruger med `admin/Susi2010`, standard-faciliteter, eksempel-galleribilleder)
 - Implementeres som en ny route-fil og controller, ikke blandet ind i eksisterende routes
 
 **TEST_ADMIN_TOKEN support i auth-middleware**
@@ -62,7 +62,7 @@ Målet er at en agent (eller udvikler) kan køre `npm run test:e2e` lokalt mod d
 
 **Første E2E-test: Password-login flow**
 - Test-fil: `e2e/login.spec.ts`
-- Scenarie 1: Succesfuldt login med admin/admin123 — verificer at admin-dashboard vises
+- Scenarie 1: Succesfuldt login med admin/Susi2010 — verificer at admin-dashboard vises
 - Scenarie 2: Fejlet login med forkert password — verificer fejlbesked
 - Scenarie 3: Logout — verificer redirect til login-side
 - Brug test-reset endpoint i `beforeEach` for at sikre known state
@@ -114,7 +114,7 @@ Målet er at en agent (eller udvikler) kan køre `npm run test:e2e` lokalt mod d
 
 ## Further Notes
 
-- **Eksisterende admin-credentials i schema**: `admin` / `admin123` — disse bruges som test-credentials og er allerede i `schema.postgres.sql`
+- **Eksisterende admin-credentials i schema**: `admin` / `Susi2010` — disse bruges som test-credentials og er allerede i `schema.postgres.sql`
 - **Rate limiting**: Standard rate limit er 10 req/15 min. Tests kan ramme dette. Overvej at hæve eller deaktivere rate limiting når `NODE_ENV=test`.
 - **GitHub OAuth**: Forbliver en manuel test. PRD'en for GitHub OAuth Login specificerer allerede en manuel test-tjekliste.
 - **Fremtidige tests**: Når dette fundament er på plads, bør nye PRD'er inkludere E2E-testscenarier. Eksempler på næste tests: booking-forespørgsel, kontaktformular, galleri-administration, facilitetsadministration.

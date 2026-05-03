@@ -91,7 +91,7 @@ Tilgås via `/admin/login`.
 
 Standard credentials (skift efter første login):
 - Brugernavn: `admin`
-- Password: `admin123`
+- Password: `Susi2010`
 
 ### Admin funktioner
 - **Galleri** (`/admin/gallery`): Upload/rediger/slet/sorter billeder

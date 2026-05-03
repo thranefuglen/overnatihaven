@@ -43,7 +43,7 @@ const Facilities = () => {
           {facilities.map((facility) => (
             <div
               key={facility.id}
-              className="card p-6 hover:scale-105 transition-transform duration-300"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6"
             >
               <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mb-4 text-primary-600 dark:text-primary-400">
                 <FacilityIcon iconName={facility.icon_name} />

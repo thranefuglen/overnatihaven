@@ -28,7 +28,7 @@ router.post('/reset', async (_req: Request, res: Response) => {
       `INSERT INTO admin_users (username, password_hash)
        VALUES ($1, $2)
        ON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash`,
-      ['admin', '$2b$10$XWTwpMUZWNMH2hnn8./Xx.ZK79.lPklnXEiwnhUJ6hrhxrCPXiQAO']
+      ['admin', '$2b$10$fOzugvgbY6Cglded6fjd2uZC.dj.R.TbgQ.ErwH.CQNgIRj.SytOG']
     );
 
     // Re-seed facilities

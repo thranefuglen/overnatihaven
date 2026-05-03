@@ -9,11 +9,11 @@ test.beforeEach(async ({ request }) => {
 });
 
 test.describe('Password login flow', () => {
-  test('succesfuldt login med admin/admin123', async ({ page }) => {
+  test('succesfuldt login med admin/Susi2010', async ({ page }) => {
     await page.goto('/admin/login');
 
     await page.fill('#username', 'admin');
-    await page.fill('#password', 'admin123');
+    await page.fill('#password', 'Susi2010');
     await page.click('button[type="submit"]');
 
     // Should redirect to admin dashboard
@@ -38,7 +38,7 @@ test.describe('Password login flow', () => {
     // Login first
     await page.goto('/admin/login');
     await page.fill('#username', 'admin');
-    await page.fill('#password', 'admin123');
+    await page.fill('#password', 'Susi2010');
     await page.click('button[type="submit"]');
 
     // Wait for admin dashboard
