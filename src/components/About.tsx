@@ -15,7 +15,7 @@ const About = () => {
               
               </p>
               <p>
-                Teltet kan slås mellem frugttræer og vilde bede og der er rig lejlighed til at nyde
+                Teltet kan slås op mellem frugttræer og vilde bede og der er rig lejlighed til at nyde
                  den skønne have med masser af siddepladser. Gæster er meget velkommen til at plukke af 
                  havens frugter, bær og smage på årstidens grøntsager. Shelter er placeret tilbagetrukken i haven.
               </p>
