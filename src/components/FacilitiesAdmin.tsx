@@ -15,6 +15,8 @@ const FacilitiesAdmin: React.FC = () => {
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const { token } = useAuth()
 
   useEffect(() => {
@@ -50,26 +52,7 @@ const FacilitiesAdmin: React.FC = () => {
     }
   }
 
-  const handleDragStart = (e: React.DragEvent, index: number) => {
-    e.dataTransfer.setData('text/plain', String(index))
-    e.dataTransfer.effectAllowed = 'move'
-  }
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'move'
-  }
-
-  const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
-    e.preventDefault()
-    const dragIndex = parseInt(e.dataTransfer.getData('text/plain'), 10)
-    if (dragIndex === dropIndex) return
-
-    const newFacilities = [...facilities]
-    const [dragged] = newFacilities.splice(dragIndex, 1)
-    newFacilities.splice(dropIndex, 0, dragged)
-    setFacilities(newFacilities)
-
+  const persistOrder = async (newFacilities: Facility[]) => {
     try {
       const response = await fetch(`${API_URL}/facilities/admin/reorder`, {
         method: 'PATCH',
@@ -84,6 +67,41 @@ const FacilitiesAdmin: React.FC = () => {
       setError('Kunne ikke sortere faciliteter')
       fetchFacilities()
     }
+  }
+
+  const moveFacility = (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= facilities.length || fromIndex === toIndex) return
+    const newFacilities = [...facilities]
+    const [moved] = newFacilities.splice(fromIndex, 1)
+    newFacilities.splice(toIndex, 0, moved)
+    setFacilities(newFacilities)
+    persistOrder(newFacilities)
+  }
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    e.dataTransfer.setData('text/plain', String(index))
+    e.dataTransfer.effectAllowed = 'move'
+    setDraggedIndex(index)
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    if (dragOverIndex !== index) setDragOverIndex(index)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null)
+    setDragOverIndex(null)
+  }
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault()
+    const dragIndex = parseInt(e.dataTransfer.getData('text/plain'), 10)
+    setDraggedIndex(null)
+    setDragOverIndex(null)
+    if (dragIndex === dropIndex) return
+    moveFacility(dragIndex, dropIndex)
   }
 
   const handleDelete = async (id: number) => {
@@ -142,23 +160,59 @@ const FacilitiesAdmin: React.FC = () => {
         </div>
       )}
 
+      <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
+        Tip: Brug pilene for at flytte én ad gangen, eller træk i grebet til venstre.
+      </p>
       <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           {facilities.length === 0 ? (
             <li className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">Ingen faciliteter fundet</li>
           ) : (
-            facilities.map((facility, index) => (
+            facilities.map((facility, index) => {
+              const isDragging = draggedIndex === index
+              const showDropAbove = dragOverIndex === index && draggedIndex !== null && draggedIndex > index
+              const showDropBelow = dragOverIndex === index && draggedIndex !== null && draggedIndex < index
+              return (
               <li
                 key={facility.id}
                 draggable
                 onDragStart={(e) => handleDragStart(e, index)}
-                onDragOver={handleDragOver}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDragEnd={handleDragEnd}
                 onDrop={(e) => handleDrop(e, index)}
-                className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-move transition-colors"
+                className={`relative px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all ${
+                  isDragging ? 'opacity-40' : ''
+                } ${showDropAbove ? 'border-t-4 border-t-primary-500' : ''} ${
+                  showDropBelow ? 'border-b-4 border-b-primary-500' : ''
+                }`}
               >
                 <div className="flex items-center space-x-4">
+                  {/* Up/down buttons */}
+                  <div className="flex flex-col flex-shrink-0">
+                    <button
+                      onClick={() => moveFacility(index, index - 1)}
+                      disabled={index === 0}
+                      title="Flyt op"
+                      className="p-1 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => moveFacility(index, index + 1)}
+                      disabled={index === facilities.length - 1}
+                      title="Flyt ned"
+                      className="p-1 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
+
                   {/* Drag handle */}
-                  <div className="flex-shrink-0 cursor-grab active:cursor-grabbing">
+                  <div className="flex-shrink-0 cursor-grab active:cursor-grabbing" title="Træk for at flytte">
                     <svg className="h-5 w-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -221,7 +275,8 @@ const FacilitiesAdmin: React.FC = () => {
                   </div>
                 </div>
               </li>
-            ))
+              )
+            })
           )}
         </ul>
       </div>
