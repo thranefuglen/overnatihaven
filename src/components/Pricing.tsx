@@ -19,18 +19,18 @@ const sleepOptions: SleepOption[] = [
   },
   {
     icon: Home,
-    title: 'Shelter med god madras',
-    description: 'Sov tørt og blødt i shelter på en god madras. Medbring selv sovepose eller dyne.',
-    priceDkk: 75,
-    priceEur: 10,
+    title: 'Ét shelter med god madras',
+    description: 'Sov tørt og blødt i shelter på en god madras. Medbring selv sovepose.',
+    priceDkk: 60,
+    priceEur: 8,
     highlighted: true,
   },
   {
     icon: BedDouble,
-    title: 'Shelter med opredning',
+    title: 'Ét shelter med opredning',
     description: 'Madras med færdig opredning — dyne, pude og lagner.',
-    priceDkk: 100,
-    priceEur: 14,
+    priceDkk: 80,
+    priceEur: 11,
   },
 ]
 
@@ -43,11 +43,46 @@ const Pricing = () => {
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Enkle og overkommelige priser for overnatning
           </p>
-          <p className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium">
-            <Info className="w-4 h-4" />
-            Max 1 overnatning ad gangen
-          </p>
+          <div className="flex flex-wrap justify-center gap-2 mt-4">
+            <p className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium">
+              <Info className="w-4 h-4" />
+              Max 1 overnatning
+            </p>
+            <p className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium">
+              <Info className="w-4 h-4" />
+              Børn under 12 år halv pris
+            </p>
+          </div>
         </div>
+
+        {/* Basis-pris banner */}
+        <div className="max-w-4xl mx-auto mb-12">
+          <div className="bg-white dark:bg-gray-700 rounded-2xl p-6 md:p-8 shadow-md border-l-4 border-primary-600 dark:border-primary-400">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+              <div className="flex items-baseline gap-2 flex-shrink-0">
+                <span className="text-5xl font-bold text-primary-600 dark:text-primary-400">30</span>
+                <span className="text-xl text-gray-700 dark:text-gray-200">kr.</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">≈ 4 €</span>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                  Basis: teltplads eller shelter — uden adgang til faciliteter
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Per person / nat. Denne mulighed er den, du finder via UdiNaturen og shelter-appen.
+                  Ønsker du adgang til faciliteter, vælg en af mulighederne nedenfor.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3 className="text-2xl md:text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">
+          Med adgang til alle faciliteter
+        </h3>
+        <p className="text-center text-gray-600 dark:text-gray-300 mb-10">
+          Toilet, bad, køkken, el, grill og brænde inkluderet
+        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {sleepOptions.map((option) => {
