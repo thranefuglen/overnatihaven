@@ -11,45 +11,23 @@ const About = () => {
             <div className="space-y-4 text-lg text-gray-700 dark:text-gray-300">
               <p>
                 Velkommen til min store have, hvor cyklister og vandrere kan finde ro og hvile efter en lang dag på
-                farten. Mit navn er Elin, og jeg elsker at åbne min have for overnattende gæster. 
-              
+                farten. Mit navn er Elin, og jeg ser frem til at åbne min have for overnattende gæster.
+
               </p>
               <p>
                 Teltet kan slås op mellem frugttræer og vilde bede og der er rig lejlighed til at nyde
-                 den skønne have med masser af siddepladser. Gæster er meget velkommen til at plukke af 
+                 den skønne have med masser af siddepladser. Gæster er meget velkommen til at plukke af
                  havens frugter, bær og smage på årstidens grøntsager. Shelter er placeret tilbagetrukken i haven.
               </p>
               <p>
-                Uanset om du er på en lang cykeltur gennem Danmark eller bare har brug for et roligt sted
-                at overnatte, er du hjertelig velkommen i min have. Her kan du slappe af, nyde naturen og
+                Uanset om du er på en cykeltur gennem Danmark eller bare har brug for et roligt sted
+                at overnatte, er du hjertelig velkommen i min have. Her kan du slappe af, nyde blomsterne og
                 lade batterierne op til næste etape af dit eventyr.
               </p>
             </div>
 
             {/* Key Features */}
             <div className="mt-8 grid grid-cols-2 gap-4">
-              <div className="flex items-start space-x-3">
-                <svg
-                  className="w-6 h-6 text-primary-600 flex-shrink-0 mt-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-gray-700 dark:text-gray-300">Rolige omgivelser</span>
-              </div>
-              <div className="flex items-start space-x-3">
-                <svg
-                  className="w-6 h-6 text-primary-600 dark:text-primary-400 flex-shrink-0 mt-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-gray-700 dark:text-gray-300">Cykelsikkert område</span>
-              </div>
               <div className="flex items-start space-x-3">
                 <svg
                   className="w-6 h-6 text-primary-600 dark:text-primary-400 flex-shrink-0 mt-1"

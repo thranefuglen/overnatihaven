@@ -19,15 +19,15 @@ const sleepOptions: SleepOption[] = [
   },
   {
     icon: Home,
-    title: 'Shelter med god madras',
-    description: 'Sov tørt og blødt i shelter på en god madras. Medbring selv sovepose eller dyne.',
+    title: 'Ét shelter med god madras',
+    description: 'Sov tørt og blødt i shelter på en god madras. Medbring selv sovepose.',
     priceDkk: 75,
     priceEur: 10,
     highlighted: true,
   },
   {
     icon: BedDouble,
-    title: 'Shelter med opredning',
+    title: 'Ét shelter med opredning',
     description: 'Madras med færdig opredning — dyne, pude og lagner.',
     priceDkk: 100,
     priceEur: 14,
@@ -43,10 +43,16 @@ const Pricing = () => {
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Enkle og overkommelige priser for overnatning
           </p>
-          <p className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium">
-            <Info className="w-4 h-4" />
-            Max 1 overnatning ad gangen
-          </p>
+          <div className="flex flex-wrap justify-center gap-2 mt-4">
+            <p className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium">
+              <Info className="w-4 h-4" />
+              Max 1 overnatning
+            </p>
+            <p className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium">
+              <Info className="w-4 h-4" />
+              Børn under 12 år halv pris
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
