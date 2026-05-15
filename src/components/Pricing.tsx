@@ -163,7 +163,7 @@ const Pricing = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Betaling</h4>
-                <p className="text-gray-600 dark:text-gray-300">Kontant eller MobilePay accepteres</p>
+                <p className="text-gray-600 dark:text-gray-300">Betaling sker ved ankomst — kontant eller MobilePay accepteres</p>
               </div>
               <div>
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Afbestilling</h4>

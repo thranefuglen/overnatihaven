@@ -38,6 +38,7 @@ coverage/
 
 # Playwright MCP screenshots
 .playwright-mcp/
+.playwright-cli/
 
 # PRD filer (arbejdsdokumenter)
 PRD-*.md

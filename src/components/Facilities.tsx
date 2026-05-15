@@ -35,7 +35,7 @@ const Facilities = () => {
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Faciliteter</h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Alt hvad du behøver for en behagelig overnatning efter en lang cykeltur
+            Alt hvad du behøver for at overnatte i det fri
           </p>
         </div>
 
@@ -78,7 +78,7 @@ const Facilities = () => {
                 </li>
                 <li className="flex items-start">
                   <LucideIcons.MapPin className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0" />
-                  <span>Haven ligger 1,5 km nord for Gredstedbro, hvor der er togstation, indkøbsmuligheder, pizzeria og hotel med restaurant</span>
+                  <span>Haven ligger 1,5 km nord for Gredstedbro, hvor der er togstation, indkøbsmulighed, pizzeria og hotel med restaurant</span>
                 </li>
                 <li className="flex items-start">
                   <LucideIcons.Navigation className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0" />
