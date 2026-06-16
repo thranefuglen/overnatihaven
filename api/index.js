@@ -597,6 +597,18 @@ var createAdminUserSchema = import_zod2.z.object({
   password: import_zod2.z.string().min(6, "Password skal v\xE6re mindst 6 tegn"),
   is_active: import_zod2.z.boolean().default(true)
 });
+var isoDate = import_zod2.z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Ugyldigt datoformat (forventede YYYY-MM-DD)");
+var upsertAvailabilitySchema = import_zod2.z.object({
+  shelter_occupied: import_zod2.z.boolean(),
+  tents_occupied: import_zod2.z.number().int().min(0, "Mindst 0 teltpladser").max(3, "Max 3 teltpladser")
+});
+var updateSeasonSchema = import_zod2.z.object({
+  season_start: isoDate,
+  season_end: isoDate
+}).refine((data) => data.season_end >= data.season_start, {
+  message: "Slutdato skal v\xE6re samme dag eller efter startdato",
+  path: ["season_end"]
+});
 
 // server/routes/inquiryRoutes.ts
 var router = (0, import_express.Router)();
@@ -2078,7 +2090,152 @@ var import_config = require("dotenv/config");
 var import_postgres2 = require("@vercel/postgres");
 
 // server/db/schema.postgres.sql
-var schema_postgres_default = "-- Vercel Postgres Schema\r\n-- Gallery Images Table\r\nCREATE TABLE IF NOT EXISTS gallery_images (\r\n    id SERIAL PRIMARY KEY,\r\n    title TEXT,\r\n    description TEXT,\r\n    image_url TEXT NOT NULL,\r\n    image_path TEXT,\r\n    sort_order INTEGER DEFAULT 0,\r\n    is_active BOOLEAN DEFAULT true,\r\n    show_in_hero BOOLEAN DEFAULT false,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_sort_order ON gallery_images(sort_order);\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_is_active ON gallery_images(is_active);\r\nCREATE INDEX IF NOT EXISTS idx_gallery_images_created_at ON gallery_images(created_at);\r\n\r\n-- Admin Users Table\r\nCREATE TABLE IF NOT EXISTS admin_users (\r\n    id SERIAL PRIMARY KEY,\r\n    username TEXT UNIQUE NOT NULL,\r\n    email TEXT,\r\n    password_hash TEXT NOT NULL,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create unique index for username\r\nCREATE UNIQUE INDEX IF NOT EXISTS idx_admin_users_username ON admin_users(username);\r\n\r\n-- Insert default admin user (password: Susi2010)\r\n-- Password hash: $2b$10$fOzugvgbY6Cglded6fjd2uZC.dj.R.TbgQ.ErwH.CQNgIRj.SytOG\r\nINSERT INTO admin_users (username, password_hash)\r\nVALUES ('admin', '$2b$10$fOzugvgbY6Cglded6fjd2uZC.dj.R.TbgQ.ErwH.CQNgIRj.SytOG')\r\nON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash;\r\n\r\n-- Inquiries Table\r\nCREATE TABLE IF NOT EXISTS inquiries (\r\n    id SERIAL PRIMARY KEY,\r\n    name TEXT NOT NULL,\r\n    email TEXT NOT NULL,\r\n    phone TEXT,\r\n    arrival_date DATE NOT NULL,\r\n    departure_date DATE NOT NULL,\r\n    num_people INTEGER NOT NULL,\r\n    message TEXT,\r\n    status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'confirmed', 'declined', 'completed')),\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for inquiries\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_status ON inquiries(status);\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_dates ON inquiries(arrival_date, departure_date);\r\nCREATE INDEX IF NOT EXISTS idx_inquiries_created_at ON inquiries(created_at);\r\n\r\n-- Contacts Table\r\nCREATE TABLE IF NOT EXISTS contacts (\r\n    id SERIAL PRIMARY KEY,\r\n    name TEXT NOT NULL,\r\n    email TEXT NOT NULL,\r\n    subject TEXT,\r\n    message TEXT NOT NULL,\r\n    is_read BOOLEAN DEFAULT false,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for contacts\r\nCREATE INDEX IF NOT EXISTS idx_contacts_is_read ON contacts(is_read);\r\nCREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at);\r\n\r\n-- Facilities Table\r\nCREATE TABLE IF NOT EXISTS facilities (\r\n    id SERIAL PRIMARY KEY,\r\n    title TEXT NOT NULL,\r\n    description TEXT,\r\n    icon_name TEXT NOT NULL,\r\n    is_active BOOLEAN DEFAULT true,\r\n    sort_order INTEGER DEFAULT 0,\r\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r\n);\r\n\r\n-- Create indexes for facilities\r\nCREATE INDEX IF NOT EXISTS idx_facilities_sort_order ON facilities(sort_order);\r\nCREATE INDEX IF NOT EXISTS idx_facilities_is_active ON facilities(is_active);\r\n\r\n-- Remove duplicate facilities before adding unique index\r\nDELETE FROM facilities WHERE id NOT IN (SELECT MIN(id) FROM facilities GROUP BY title);\r\n\r\n-- Add unique index on title to prevent duplicates from repeated migrations\r\nCREATE UNIQUE INDEX IF NOT EXISTS idx_facilities_title_unique ON facilities(title);\r\n\r\n-- Seed initial facilities ONLY if the table is empty.\r\n-- This preserves user deletions: n\xE5r brugeren har slettet en facilitet i admin,\r\n-- m\xE5 migrationen ikke genoprette den ved n\xE6ste deploy.\r\nINSERT INTO facilities (title, description, icon_name, is_active, sort_order)\r\nSELECT v.title, v.description, v.icon_name, v.is_active, v.sort_order\r\nFROM (VALUES\r\n    ('Toilet & Bad', 'Adgang til toilet og brusebad i forbindelse med overnatningen', 'Home', true, 1),\r\n    ('Str\xF8m', 'Mulighed for at oplade telefon og cykellygter', 'Zap', true, 2),\r\n    ('K\xF8kkenadgang', 'Mulighed for at tilberede let mad og drikke', 'UtensilsCrossed', true, 3),\r\n    ('WiFi', 'Gratis tr\xE5dl\xF8st internet i hele haven', 'Wifi', true, 4),\r\n    ('Sikkert Omr\xE5de', 'Privat og sikkert omr\xE5de til parkering af cykler', 'ShieldCheck', true, 5),\r\n    ('Udend\xF8rs Lys', 'God belysning i haven om aftenen', 'Moon', true, 6),\r\n    ('F\xE6lles Opholdsrum', 'Hyggeligt omr\xE5de at m\xF8de andre cyklister', 'Users', true, 7),\r\n    ('Kort & Vejledning', 'Hj\xE6lp til at planl\xE6gge din videre rute', 'Map', true, 8)\r\n) AS v(title, description, icon_name, is_active, sort_order)\r\nWHERE NOT EXISTS (SELECT 1 FROM facilities)\r\nON CONFLICT (title) DO NOTHING;\r\n\r\n-- Remove duplicate gallery images before adding unique index\r\nDELETE FROM gallery_images WHERE id NOT IN (SELECT MIN(id) FROM gallery_images GROUP BY image_url);\r\n\r\n-- Add show_in_hero column if it doesn't exist (migration for existing databases)\r\nALTER TABLE gallery_images ADD COLUMN IF NOT EXISTS show_in_hero BOOLEAN DEFAULT false;\r\n\r\n-- Add unique index on image_url to prevent duplicates from repeated migrations\r\nCREATE UNIQUE INDEX IF NOT EXISTS idx_gallery_images_url_unique ON gallery_images(image_url);\r\n\r\n-- No sample gallery images \u2014 all images are managed via the admin panel\r\n";
+var schema_postgres_default = `-- Vercel Postgres Schema\r
+-- Gallery Images Table\r
+CREATE TABLE IF NOT EXISTS gallery_images (\r
+    id SERIAL PRIMARY KEY,\r
+    title TEXT,\r
+    description TEXT,\r
+    image_url TEXT NOT NULL,\r
+    image_path TEXT,\r
+    sort_order INTEGER DEFAULT 0,\r
+    is_active BOOLEAN DEFAULT true,\r
+    show_in_hero BOOLEAN DEFAULT false,\r
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r
+);\r
+\r
+-- Create indexes\r
+CREATE INDEX IF NOT EXISTS idx_gallery_images_sort_order ON gallery_images(sort_order);\r
+CREATE INDEX IF NOT EXISTS idx_gallery_images_is_active ON gallery_images(is_active);\r
+CREATE INDEX IF NOT EXISTS idx_gallery_images_created_at ON gallery_images(created_at);\r
+\r
+-- Admin Users Table\r
+CREATE TABLE IF NOT EXISTS admin_users (\r
+    id SERIAL PRIMARY KEY,\r
+    username TEXT UNIQUE NOT NULL,\r
+    email TEXT,\r
+    password_hash TEXT NOT NULL,\r
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r
+);\r
+\r
+-- Create unique index for username\r
+CREATE UNIQUE INDEX IF NOT EXISTS idx_admin_users_username ON admin_users(username);\r
+\r
+-- Insert default admin user (password: Susi2010)\r
+-- Password hash: $2b$10$fOzugvgbY6Cglded6fjd2uZC.dj.R.TbgQ.ErwH.CQNgIRj.SytOG\r
+INSERT INTO admin_users (username, password_hash)\r
+VALUES ('admin', '$2b$10$fOzugvgbY6Cglded6fjd2uZC.dj.R.TbgQ.ErwH.CQNgIRj.SytOG')\r
+ON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash;\r
+\r
+-- Inquiries Table\r
+CREATE TABLE IF NOT EXISTS inquiries (\r
+    id SERIAL PRIMARY KEY,\r
+    name TEXT NOT NULL,\r
+    email TEXT NOT NULL,\r
+    phone TEXT,\r
+    arrival_date DATE NOT NULL,\r
+    departure_date DATE NOT NULL,\r
+    num_people INTEGER NOT NULL,\r
+    message TEXT,\r
+    status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'confirmed', 'declined', 'completed')),\r
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r
+);\r
+\r
+-- Create indexes for inquiries\r
+CREATE INDEX IF NOT EXISTS idx_inquiries_status ON inquiries(status);\r
+CREATE INDEX IF NOT EXISTS idx_inquiries_dates ON inquiries(arrival_date, departure_date);\r
+CREATE INDEX IF NOT EXISTS idx_inquiries_created_at ON inquiries(created_at);\r
+\r
+-- Contacts Table\r
+CREATE TABLE IF NOT EXISTS contacts (\r
+    id SERIAL PRIMARY KEY,\r
+    name TEXT NOT NULL,\r
+    email TEXT NOT NULL,\r
+    subject TEXT,\r
+    message TEXT NOT NULL,\r
+    is_read BOOLEAN DEFAULT false,\r
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r
+);\r
+\r
+-- Create indexes for contacts\r
+CREATE INDEX IF NOT EXISTS idx_contacts_is_read ON contacts(is_read);\r
+CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at);\r
+\r
+-- Facilities Table\r
+CREATE TABLE IF NOT EXISTS facilities (\r
+    id SERIAL PRIMARY KEY,\r
+    title TEXT NOT NULL,\r
+    description TEXT,\r
+    icon_name TEXT NOT NULL,\r
+    is_active BOOLEAN DEFAULT true,\r
+    sort_order INTEGER DEFAULT 0,\r
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r
+);\r
+\r
+-- Create indexes for facilities\r
+CREATE INDEX IF NOT EXISTS idx_facilities_sort_order ON facilities(sort_order);\r
+CREATE INDEX IF NOT EXISTS idx_facilities_is_active ON facilities(is_active);\r
+\r
+-- Remove duplicate facilities before adding unique index\r
+DELETE FROM facilities WHERE id NOT IN (SELECT MIN(id) FROM facilities GROUP BY title);\r
+\r
+-- Add unique index on title to prevent duplicates from repeated migrations\r
+CREATE UNIQUE INDEX IF NOT EXISTS idx_facilities_title_unique ON facilities(title);\r
+\r
+-- Seed initial facilities ONLY if the table is empty.\r
+-- This preserves user deletions: n\xE5r brugeren har slettet en facilitet i admin,\r
+-- m\xE5 migrationen ikke genoprette den ved n\xE6ste deploy.\r
+INSERT INTO facilities (title, description, icon_name, is_active, sort_order)\r
+SELECT v.title, v.description, v.icon_name, v.is_active, v.sort_order\r
+FROM (VALUES\r
+    ('Toilet & Bad', 'Adgang til toilet og brusebad i forbindelse med overnatningen', 'Home', true, 1),\r
+    ('Str\xF8m', 'Mulighed for at oplade telefon og cykellygter', 'Zap', true, 2),\r
+    ('K\xF8kkenadgang', 'Mulighed for at tilberede let mad og drikke', 'UtensilsCrossed', true, 3),\r
+    ('WiFi', 'Gratis tr\xE5dl\xF8st internet i hele haven', 'Wifi', true, 4),\r
+    ('Sikkert Omr\xE5de', 'Privat og sikkert omr\xE5de til parkering af cykler', 'ShieldCheck', true, 5),\r
+    ('Udend\xF8rs Lys', 'God belysning i haven om aftenen', 'Moon', true, 6),\r
+    ('F\xE6lles Opholdsrum', 'Hyggeligt omr\xE5de at m\xF8de andre cyklister', 'Users', true, 7),\r
+    ('Kort & Vejledning', 'Hj\xE6lp til at planl\xE6gge din videre rute', 'Map', true, 8)\r
+) AS v(title, description, icon_name, is_active, sort_order)\r
+WHERE NOT EXISTS (SELECT 1 FROM facilities)\r
+ON CONFLICT (title) DO NOTHING;\r
+\r
+-- Remove duplicate gallery images before adding unique index\r
+DELETE FROM gallery_images WHERE id NOT IN (SELECT MIN(id) FROM gallery_images GROUP BY image_url);\r
+\r
+-- Add show_in_hero column if it doesn't exist (migration for existing databases)\r
+ALTER TABLE gallery_images ADD COLUMN IF NOT EXISTS show_in_hero BOOLEAN DEFAULT false;\r
+\r
+-- Add unique index on image_url to prevent duplicates from repeated migrations\r
+CREATE UNIQUE INDEX IF NOT EXISTS idx_gallery_images_url_unique ON gallery_images(image_url);\r
+\r
+-- No sample gallery images \u2014 all images are managed via the admin panel\r
+\r
+-- Availability Table\r
+-- Sparse: kun dage der afviger fra "alt ledigt" gemmes. Ingen r\xE6kke = alt ledigt.\r
+CREATE TABLE IF NOT EXISTS availability (\r
+    date DATE PRIMARY KEY,\r
+    shelter_occupied BOOLEAN NOT NULL DEFAULT false,\r
+    tents_occupied INTEGER NOT NULL DEFAULT 0 CHECK (tents_occupied >= 0 AND tents_occupied <= 3),\r
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r
+);\r
+\r
+-- Season Config Table (singleton-r\xE6kke med id = 1)\r
+CREATE TABLE IF NOT EXISTS season_config (\r
+    id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),\r
+    season_start DATE NOT NULL,\r
+    season_end DATE NOT NULL,\r
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\r
+);\r
+\r
+-- Seed default season (1. juni \u2013 1. september 2026), kun hvis tabellen er tom.\r
+INSERT INTO season_config (id, season_start, season_end)\r
+VALUES (1, '2026-06-01', '2026-09-01')\r
+ON CONFLICT (id) DO NOTHING;\r
+`;
 
 // server/db/migrate.ts
 async function runMigrations() {
