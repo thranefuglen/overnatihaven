@@ -24,6 +24,7 @@ const Header = ({ currentSection, setCurrentSection }: HeaderProps) => {
     { id: 'facilities', label: 'Faciliteter', href: '#facilities' },
     { id: 'gallery', label: 'Galleri', href: '#gallery' },
     { id: 'pricing', label: 'Priser', href: '#pricing' },
+    { id: 'availability', label: 'Ledige dage', href: '#availability' },
     { id: 'contact', label: 'Kontakt', href: '#contact' },
   ]
 

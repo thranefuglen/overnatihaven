@@ -8,12 +8,14 @@ import GalleryAdmin from './components/GalleryAdmin'
 import InquiriesAdmin from './components/InquiriesAdmin'
 import ContactsAdmin from './components/ContactsAdmin'
 import FacilitiesAdmin from './components/FacilitiesAdmin'
+import CalendarAdmin from './components/CalendarAdmin'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import About from './components/About'
 import Facilities from './components/Facilities'
 import Gallery from './components/Gallery'
 import Pricing from './components/Pricing'
+import Availability from './components/Availability'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 
@@ -54,6 +56,7 @@ const PublicApp: React.FC = () => {
         <Facilities />
         <Gallery />
         <Pricing />
+        <Availability />
         <Contact />
       </main>
       <Footer />
@@ -71,6 +74,7 @@ const AdminRoutes: React.FC = () => {
         <Route path="/inquiries" element={<InquiriesAdmin />} />
         <Route path="/contacts" element={<ContactsAdmin />} />
         <Route path="/facilities" element={<FacilitiesAdmin />} />
+        <Route path="/calendar" element={<CalendarAdmin />} />
         <Route path="*" element={<Navigate to="/admin/gallery" replace />} />
       </Routes>
     </AdminLayout>

@@ -148,6 +148,36 @@ export interface UpdateFacilityInput {
   sort_order?: number;
 }
 
+// Availability / calendar types
+export interface Availability {
+  date: string;
+  shelter_occupied: boolean;
+  tents_occupied: number;
+}
+
+export interface SeasonConfig {
+  season_start: string;
+  season_end: string;
+}
+
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Ugyldigt datoformat (forventede YYYY-MM-DD)');
+
+export const upsertAvailabilitySchema = z.object({
+  shelter_occupied: z.boolean(),
+  tents_occupied: z.number().int().min(0, 'Mindst 0 teltpladser').max(3, 'Max 3 teltpladser'),
+});
+
+export const updateSeasonSchema = z.object({
+  season_start: isoDate,
+  season_end: isoDate,
+}).refine((data) => data.season_end >= data.season_start, {
+  message: 'Slutdato skal være samme dag eller efter startdato',
+  path: ['season_end'],
+});
+
+export type UpsertAvailabilityInput = z.infer<typeof upsertAvailabilitySchema>;
+export type UpdateSeasonInput = z.infer<typeof updateSeasonSchema>;
+
 export interface AuthResponse {
   success: boolean;
   token: string;

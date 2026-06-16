@@ -4,6 +4,7 @@ import contactRoutes from './contactRoutes';
 import galleryRoutes from './galleryRoutes';
 import authRoutes from './authRoutes';
 import facilityRoutes from './facilityRoutes';
+import availabilityRoutes from './availabilityRoutes';
 import testRoutes from './testRoutes';
 
 const router = Router();
@@ -23,6 +24,7 @@ router.use('/contacts', contactRoutes);
 router.use('/gallery', galleryRoutes);
 router.use('/auth', authRoutes);
 router.use('/facilities', facilityRoutes);
+router.use('/availability', availabilityRoutes);
 router.use('/test', testRoutes);
 
 export default router;

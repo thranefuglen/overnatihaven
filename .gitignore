@@ -36,9 +36,11 @@ coverage/
 # TypeScript build info
 *.tsbuildinfo
 
-# Playwright MCP screenshots
+# Playwright
 .playwright-mcp/
 .playwright-cli/
+test-results/
+playwright-report/
 
 # PRD filer (arbejdsdokumenter)
 PRD-*.md
