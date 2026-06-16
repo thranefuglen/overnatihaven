@@ -47,9 +47,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             </Link>
             
             <Link
-              to="/admin/inquiries"
+              to="/admin/calendar"
               className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                isActive('/admin/inquiries')
+                isActive('/admin/calendar')
                   ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
               }`}
@@ -64,10 +64,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              Forespørgsler
+              Kalender
             </Link>
             
             <Link
@@ -166,7 +166,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               <div className="flex items-center">
                 <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                   {isActive('/admin') && 'Galleri Administration'}
-                  {isActive('/admin/inquiries') && 'Forespørgsler'}
+                  {isActive('/admin/calendar') && 'Kalender'}
                   {isActive('/admin/contacts') && 'Kontaktbeskeder'}
                   {isActive('/admin/facilities') && 'Faciliteter Administration'}
                 </h1>

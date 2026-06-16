@@ -121,3 +121,25 @@ ALTER TABLE gallery_images ADD COLUMN IF NOT EXISTS show_in_hero BOOLEAN DEFAULT
 CREATE UNIQUE INDEX IF NOT EXISTS idx_gallery_images_url_unique ON gallery_images(image_url);
 
 -- No sample gallery images — all images are managed via the admin panel
+
+-- Availability Table
+-- Sparse: kun dage der afviger fra "alt ledigt" gemmes. Ingen række = alt ledigt.
+CREATE TABLE IF NOT EXISTS availability (
+    date DATE PRIMARY KEY,
+    shelter_occupied BOOLEAN NOT NULL DEFAULT false,
+    tents_occupied INTEGER NOT NULL DEFAULT 0 CHECK (tents_occupied >= 0 AND tents_occupied <= 3),
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Season Config Table (singleton-række med id = 1)
+CREATE TABLE IF NOT EXISTS season_config (
+    id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+    season_start DATE NOT NULL,
+    season_end DATE NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Seed default season (1. juni – 1. september 2026), kun hvis tabellen er tom.
+INSERT INTO season_config (id, season_start, season_end)
+VALUES (1, '2026-06-01', '2026-09-01')
+ON CONFLICT (id) DO NOTHING;

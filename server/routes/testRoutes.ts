@@ -22,6 +22,16 @@ router.post('/reset', async (_req: Request, res: Response) => {
     await execute('DELETE FROM contacts');
     await execute('DELETE FROM gallery_images');
     await execute('DELETE FROM facilities');
+    await execute('DELETE FROM availability');
+
+    // Reset season config to default season (1. juni – 1. september 2026)
+    await execute(
+      `INSERT INTO season_config (id, season_start, season_end)
+       VALUES (1, '2026-06-01', '2026-09-01')
+       ON CONFLICT (id) DO UPDATE
+         SET season_start = EXCLUDED.season_start,
+             season_end = EXCLUDED.season_end`
+    );
 
     // Re-seed admin user
     await execute(
