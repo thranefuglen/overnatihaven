@@ -101,5 +101,15 @@ test.describe('Tilgængelighedskalender', () => {
       const data = await (await request.get(`${API_URL}/availability`)).json();
       return data.data.season;
     }).toMatchObject({ season_start: '2027-05-01', season_end: '2027-09-30' });
+
+    // Ryd op: sæt sæsonen tilbage til standard, så den delte dev-database
+    // ikke efterlades med en 2027-sæson (beforeEach nulstiller kun før hver test).
+    const token = (await (await request.post(`${API_URL}/auth/login`, {
+      data: { username: 'admin', password: 'Susi2010' },
+    })).json()).data.token;
+    await request.put(`${API_URL}/availability/season`, {
+      headers: { Authorization: `Bearer ${token}` },
+      data: { season_start: '2026-06-01', season_end: '2026-09-01' },
+    });
   });
 });

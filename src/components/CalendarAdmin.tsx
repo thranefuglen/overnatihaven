@@ -65,11 +65,10 @@ const CalendarAdmin: React.FC = () => {
     ? occupiedByDate[selectedDate] ?? { date: selectedDate, shelter_occupied: false, tents_occupied: 0 }
     : { date: '', shelter_occupied: false, tents_occupied: 0 }
 
-  const goToPrevMonth = () => {
-    setViewMonth((m) => { if (m === 0) { setViewYear((y) => y - 1); return 11 } return m - 1 })
-  }
-  const goToNextMonth = () => {
-    setViewMonth((m) => { if (m === 11) { setViewYear((y) => y + 1); return 0 } return m + 1 })
+  const shiftMonth = (delta: number) => {
+    const d = new Date(viewYear, viewMonth + delta, 1)
+    setViewYear(d.getFullYear())
+    setViewMonth(d.getMonth())
   }
 
   // Opdatér lokal state efter et gemt kald
@@ -208,8 +207,8 @@ const CalendarAdmin: React.FC = () => {
         <CalendarGrid
           year={viewYear}
           month={viewMonth}
-          onPrevMonth={goToPrevMonth}
-          onNextMonth={goToNextMonth}
+          onPrevMonth={() => shiftMonth(-1)}
+          onNextMonth={() => shiftMonth(1)}
           occupiedByDate={occupiedByDate}
           season={season}
           selectedDate={selectedDate}
