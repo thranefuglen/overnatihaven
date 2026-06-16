@@ -107,4 +107,19 @@ export function formatLongDate(iso: string): string {
   return parseISODate(iso).toLocaleDateString('da-DK', { weekday: 'long', day: 'numeric', month: 'long' })
 }
 
+/** Dato uden ugedag, fx "1. juni". */
+export function formatDayMonth(iso: string): string {
+  return parseISODate(iso).toLocaleDateString('da-DK', { day: 'numeric', month: 'long' })
+}
+
+/** Sæsonens datointerval som tekst, fx "1. juni – 1. september". */
+export function formatSeasonRange(season: SeasonConfig): string {
+  return `${formatDayMonth(season.season_start)} – ${formatDayMonth(season.season_end)}`
+}
+
+/** Årstallet for sæsonen, udledt af startdatoen, fx 2026. */
+export function seasonYear(season: SeasonConfig): number {
+  return parseISODate(season.season_start).getFullYear()
+}
+
 export const WEEKDAY_LABELS = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn']

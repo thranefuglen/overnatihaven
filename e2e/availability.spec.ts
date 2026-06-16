@@ -53,6 +53,29 @@ test.describe('Tilgængelighedskalender', () => {
     await expect(page.locator('#availability').getByText('Shelter: optaget')).toBeVisible();
   });
 
+  test('kontaktsektionens åbningstider følger den sæson API\'et leverer', async ({ page }) => {
+    // Mock en sæson der adskiller sig fra den hårdkodede fallback (2026, 1. juni – 1. september).
+    await page.route('**/api/availability', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: true,
+          data: {
+            season: { season_start: '2027-05-01', season_end: '2027-09-30' },
+            days: [],
+          },
+        }),
+      });
+    });
+
+    await page.goto('/');
+
+    const contact = page.locator('#contact');
+    await expect(contact.getByText('Sæson 2027')).toBeVisible();
+    await expect(contact.getByText('1. maj – 30. september')).toBeVisible();
+  });
+
   test('admin kan markere, lukke og nulstille en dag samt ændre sæson', async ({ page, request }) => {
     const iso = seedDateISO();
 
