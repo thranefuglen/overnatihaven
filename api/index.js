@@ -33,7 +33,7 @@ __export(handler_exports, {
   default: () => handler
 });
 module.exports = __toCommonJS(handler_exports);
-var import_express6 = __toESM(require("express"));
+var import_express7 = __toESM(require("express"));
 var import_cors = __toESM(require("cors"));
 var import_helmet = __toESM(require("helmet"));
 var import_express_rate_limit = __toESM(require("express-rate-limit"));
@@ -2085,6 +2085,163 @@ router5.patch("/admin/:id/toggle", authenticateToken, facilityController.toggleF
 router5.delete("/admin/:id", authenticateToken, facilityController.deleteFacility.bind(facilityController));
 var facilityRoutes_default = router5;
 
+// server/routes/availabilityRoutes.ts
+var import_express6 = require("express");
+
+// server/repositories/availabilityRepository.ts
+var DEFAULT_SEASON = {
+  season_start: "2026-06-01",
+  season_end: "2026-09-01"
+};
+var AvailabilityRepository = class {
+  /**
+   * Get the (single) season configuration. Dates returned as YYYY-MM-DD
+   * strings via to_char to avoid timezone-skewed Date parsing.
+   */
+  async getSeason() {
+    const row = await queryOne(
+      `SELECT to_char(season_start, 'YYYY-MM-DD') AS season_start,
+              to_char(season_end, 'YYYY-MM-DD') AS season_end
+       FROM season_config WHERE id = 1`
+    );
+    return row ?? DEFAULT_SEASON;
+  }
+  async updateSeason(seasonStart, seasonEnd) {
+    await execute(
+      `INSERT INTO season_config (id, season_start, season_end, updated_at)
+       VALUES (1, $1, $2, CURRENT_TIMESTAMP)
+       ON CONFLICT (id) DO UPDATE
+         SET season_start = EXCLUDED.season_start,
+             season_end = EXCLUDED.season_end,
+             updated_at = CURRENT_TIMESTAMP`,
+      [seasonStart, seasonEnd]
+    );
+    return this.getSeason();
+  }
+  /**
+   * Only returns days that differ from the default (something occupied).
+   */
+  async getOccupiedDays() {
+    return query(
+      `SELECT to_char(date, 'YYYY-MM-DD') AS date, shelter_occupied, tents_occupied
+       FROM availability
+       WHERE shelter_occupied = true OR tents_occupied > 0
+       ORDER BY date ASC`
+    );
+  }
+  /**
+   * Upsert a day. If the day ends up fully free, the row is deleted to keep
+   * the table sparse.
+   */
+  async upsertDay(date, shelterOccupied, tentsOccupied) {
+    if (!shelterOccupied && tentsOccupied === 0) {
+      await this.deleteDay(date);
+      return { date, shelter_occupied: false, tents_occupied: 0 };
+    }
+    await execute(
+      `INSERT INTO availability (date, shelter_occupied, tents_occupied, updated_at)
+       VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
+       ON CONFLICT (date) DO UPDATE
+         SET shelter_occupied = EXCLUDED.shelter_occupied,
+             tents_occupied = EXCLUDED.tents_occupied,
+             updated_at = CURRENT_TIMESTAMP`,
+      [date, shelterOccupied, tentsOccupied]
+    );
+    return { date, shelter_occupied: shelterOccupied, tents_occupied: tentsOccupied };
+  }
+  async deleteDay(date) {
+    const result = await execute("DELETE FROM availability WHERE date = $1", [date]);
+    return result.rowCount > 0;
+  }
+};
+var availabilityRepository = new AvailabilityRepository();
+
+// server/controllers/availabilityController.ts
+var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+var AvailabilityController = class {
+  /**
+   * GET /api/availability (public)
+   * Returns season config + all occupied days. The client computes per-day status.
+   */
+  async getAvailability(_req, res) {
+    try {
+      const [season, days] = await Promise.all([
+        availabilityRepository.getSeason(),
+        availabilityRepository.getOccupiedDays()
+      ]);
+      res.status(200).json({ success: true, data: { season, days } });
+    } catch (error) {
+      logger.error("Error fetching availability", { error: error.message });
+      res.status(500).json({ success: false, message: "Kunne ikke hente tilg\xE6ngelighed" });
+    }
+  }
+  /**
+   * PUT /api/availability/season (admin)
+   */
+  async updateSeason(req, res) {
+    try {
+      const parsed = updateSeasonSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({ success: false, message: parsed.error.errors[0]?.message ?? "Ugyldige s\xE6sondatoer" });
+        return;
+      }
+      const season = await availabilityRepository.updateSeason(parsed.data.season_start, parsed.data.season_end);
+      res.status(200).json({ success: true, data: season });
+    } catch (error) {
+      logger.error("Error updating season", { error: error.message });
+      res.status(500).json({ success: false, message: "Kunne ikke opdatere s\xE6son" });
+    }
+  }
+  /**
+   * PUT /api/availability/:date (admin)
+   */
+  async upsertDay(req, res) {
+    try {
+      const { date } = req.params;
+      if (!DATE_RE.test(date)) {
+        res.status(400).json({ success: false, message: "Ugyldig dato" });
+        return;
+      }
+      const parsed = upsertAvailabilitySchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({ success: false, message: parsed.error.errors[0]?.message ?? "Ugyldige data" });
+        return;
+      }
+      const day = await availabilityRepository.upsertDay(date, parsed.data.shelter_occupied, parsed.data.tents_occupied);
+      res.status(200).json({ success: true, data: day });
+    } catch (error) {
+      logger.error("Error updating availability", { error: error.message });
+      res.status(500).json({ success: false, message: "Kunne ikke opdatere dagen" });
+    }
+  }
+  /**
+   * DELETE /api/availability/:date (admin) — nulstil til alt ledigt.
+   */
+  async resetDay(req, res) {
+    try {
+      const { date } = req.params;
+      if (!DATE_RE.test(date)) {
+        res.status(400).json({ success: false, message: "Ugyldig dato" });
+        return;
+      }
+      await availabilityRepository.deleteDay(date);
+      res.status(200).json({ success: true });
+    } catch (error) {
+      logger.error("Error resetting availability", { error: error.message });
+      res.status(500).json({ success: false, message: "Kunne ikke nulstille dagen" });
+    }
+  }
+};
+var availabilityController = new AvailabilityController();
+
+// server/routes/availabilityRoutes.ts
+var router6 = (0, import_express6.Router)();
+router6.get("/", availabilityController.getAvailability.bind(availabilityController));
+router6.put("/season", authenticateToken, availabilityController.updateSeason.bind(availabilityController));
+router6.put("/:date", authenticateToken, availabilityController.upsertDay.bind(availabilityController));
+router6.delete("/:date", authenticateToken, availabilityController.resetDay.bind(availabilityController));
+var availabilityRoutes_default = router6;
+
 // server/db/migrate.ts
 var import_config = require("dotenv/config");
 var import_postgres2 = require("@vercel/postgres");
@@ -2260,7 +2417,7 @@ if (isMain) {
 }
 
 // server/handler.ts
-var app = (0, import_express6.default)();
+var app = (0, import_express7.default)();
 app.set("trust proxy", 1);
 app.use((0, import_helmet.default)({
   contentSecurityPolicy: false
@@ -2269,8 +2426,8 @@ app.use((0, import_cors.default)({
   origin: process.env.CORS_ORIGIN || "*",
   credentials: true
 }));
-app.use(import_express6.default.json());
-app.use(import_express6.default.urlencoded({ extended: true }));
+app.use(import_express7.default.json());
+app.use(import_express7.default.urlencoded({ extended: true }));
 var limiter = (0, import_express_rate_limit.default)({
   windowMs: 15 * 60 * 1e3,
   max: 100
@@ -2288,6 +2445,7 @@ app.use("/api/contacts", contactRoutes_default);
 app.use("/api/gallery", galleryRoutes_default);
 app.use("/api/auth", authRoutes_default);
 app.use("/api/facilities", facilityRoutes_default);
+app.use("/api/availability", availabilityRoutes_default);
 app.use((err, _req, res, _next) => {
   console.error("Error:", err);
   res.status(err.status || 500).json({
