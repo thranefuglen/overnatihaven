@@ -8,6 +8,7 @@ import contactRoutes from './routes/contactRoutes';
 import galleryRoutes from './routes/galleryRoutes';
 import authRoutes from './routes/authRoutes';
 import facilityRoutes from './routes/facilityRoutes';
+import availabilityRoutes from './routes/availabilityRoutes';
 import { runMigrations } from './db/migrate';
 
 const app = express();
@@ -50,6 +51,7 @@ app.use('/api/contacts', contactRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/facilities', facilityRoutes);
+app.use('/api/availability', availabilityRoutes);
 
 // Error handler
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
