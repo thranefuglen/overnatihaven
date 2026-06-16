@@ -1,8 +1,29 @@
+import { useState, useEffect } from 'react'
 import LocationMap from './LocationMap'
 import PhoneIcon from './icons/PhoneIcon'
 import EmailIcon from './icons/EmailIcon'
+import { API_URL } from '../config/api'
+import { formatSeasonRange, seasonYear, type SeasonConfig } from '../utils/availability'
+
+const DEFAULT_SEASON: SeasonConfig = { season_start: '2026-06-01', season_end: '2026-09-01' }
 
 const Contact = () => {
+  const [season, setSeason] = useState<SeasonConfig>(DEFAULT_SEASON)
+
+  useEffect(() => {
+    const fetchSeason = async () => {
+      try {
+        const response = await fetch(`${API_URL}/availability`)
+        if (!response.ok) throw new Error('Failed to fetch availability')
+        const data = await response.json()
+        setSeason(data.data?.season ?? DEFAULT_SEASON)
+      } catch (err) {
+        console.error('Error fetching season:', err)
+        // Behold fallback-sæsonen, så åbningstiderne aldrig står tomme.
+      }
+    }
+    fetchSeason()
+  }, [])
 
   return (
     <section id="contact" className="bg-white dark:bg-gray-900 transition-colors">
@@ -58,8 +79,8 @@ const Contact = () => {
                   </div>
                   <div className="ml-4">
                     <h4 className="font-semibold text-gray-900 dark:text-white">Åbningstider</h4>
-                    <p className="text-gray-600 dark:text-gray-300 mt-1">Sæson 2026</p>
-                    <p className="text-gray-600 dark:text-gray-300">1. juni – 1. september</p>
+                    <p className="text-gray-600 dark:text-gray-300 mt-1">Sæson {seasonYear(season)}</p>
+                    <p className="text-gray-600 dark:text-gray-300">{formatSeasonRange(season)}</p>
                   </div>
                 </div>
 
