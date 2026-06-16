@@ -17,15 +17,15 @@ Dette projekt deployer automatisk via Vercel ved push/merge til `main`.
 | Preview | Vercel Postgres (dev/scratch) | Push til hvilken som helst branch |
 | Development | Vercel Postgres (dev/scratch) | Lokalt |
 
-### VIGTIGT: nye API-ruter skal registreres i `server/handler.ts`
-- Produktionens serverless-entry er **`server/handler.ts`**, som har sin **egen** liste af `app.use('/api/...')`-mounts. Den deler **ikke** `server/routes/index.ts` (som kun bruges af dev-serveren via `app.ts`).
-- Tilføjer du en ny rute, skal den registreres **begge** steder — ellers virker den lokalt/i E2E men giver **404 i produktion**.
-- `api/index.js` er den bundlede serverless-funktion (committet build-artefakt). Efter enhver `server/`-ændring:
+### VIGTIGT: `api/index.js` er et committet build-artefakt
+- `api/index.js` er den bundlede serverless-funktion, som Vercel deployer **som-det-er** (den genbygges ikke ved deploy).
+- **Enhver ændring i `server/`** (ruter, controllers, schema i `schema.postgres.sql` osv.) kræver, at bundlen genbygges og committes i samme PR:
   ```
-  npm run build:api   # bundler handler.ts → api/index.js
+  npm run build:api   # skriver api/index.js
   git add api/index.js
   ```
-- SQL-skemaet bundles ind via `--loader:.sql=text`, og `handler.ts` kører `runMigrations()` idempotent ved cold start — så nye tabeller oprettes automatisk i prod-databasen, *forudsat* bundlen er genbygget.
+- Glemmer du det, deployes frontenden uden den matchende backend → fx 404 på nye API-ruter i produktion.
+- SQL-skemaet bundles ind via `--loader:.sql=text`, og `handler.ts` kører `runMigrations()` idempotent ved cold start — så nye tabeller oprettes automatisk, *forudsat* bundlen er genbygget.
 
 ## Test-regler
 
