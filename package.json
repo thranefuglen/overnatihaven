@@ -16,7 +16,8 @@
     "test": "jest",
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui",
-    "db:migrate": "esbuild server/db/migrate.ts --bundle --platform=node --format=cjs --packages=external --loader:.sql=text --outfile=node_modules/.cache/migrate.cjs && node node_modules/.cache/migrate.cjs"
+    "db:migrate": "esbuild server/db/migrate.ts --bundle --platform=node --format=cjs --packages=external --loader:.sql=text --outfile=node_modules/.cache/migrate.cjs && node node_modules/.cache/migrate.cjs",
+    "blob:cleanup": "tsx server/scripts/cleanup-blobs.ts"
   },
   "keywords": [
     "camping",
@@ -29,6 +30,7 @@
   "dependencies": {
     "@types/leaflet": "^1.9.21",
     "@types/react-router-dom": "^5.3.3",
+    "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.3.0",
     "@vercel/node": "^3.0.0",
     "@vercel/postgres": "^0.10.0",
