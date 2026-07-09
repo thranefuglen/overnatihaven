@@ -1,3 +1,8 @@
+// Billedet ligger i repoet og serveres fra Vercels CDN — ikke fra Vercel Blob.
+// Det må aldrig pege på en blob-URL: blob:cleanup kender kun URL'er i databasen
+// og sletter alt andet som forældreløst (det skete for den tidligere hardkodede URL).
+import udsigtOverHaven from '../assets/udsigt-over-haven.webp'
+
 const About = () => {
   return (
     <section id="about" className="bg-white dark:bg-gray-800 transition-colors">
@@ -57,9 +62,10 @@ const About = () => {
           <div className="relative">
             <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="https://ihslrztuzx2mtoua.public.blob.vercel-storage.com/gallery/1772288751470-le96is.jpeg"
+                src={udsigtOverHaven}
                 alt="Udsigt over haven"
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
             </div>
             {/* Decorative element */}
