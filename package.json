@@ -17,7 +17,10 @@
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui",
     "db:migrate": "esbuild server/db/migrate.ts --bundle --platform=node --format=cjs --packages=external --loader:.sql=text --outfile=node_modules/.cache/migrate.cjs && node node_modules/.cache/migrate.cjs",
-    "blob:cleanup": "tsx server/scripts/cleanup-blobs.ts"
+    "blob:cleanup": "tsx server/scripts/cleanup-blobs.ts",
+    "blob:compress": "tsx server/scripts/compress-blobs.ts",
+    "blob:diagnose": "tsx server/scripts/diagnose-blobs.ts",
+    "prod-env": "node scripts/with-prod-env.mjs"
   },
   "keywords": [
     "camping",
@@ -49,6 +52,7 @@
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.10.1",
+    "sharp": "^0.35.3",
     "winston": "^3.11.0",
     "zod": "^3.22.4"
   },

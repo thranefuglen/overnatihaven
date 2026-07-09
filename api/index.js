@@ -1017,6 +1017,27 @@ var galleryRepository = new GalleryRepository();
 var import_multer = __toESM(require("multer"));
 var import_path2 = __toESM(require("path"));
 var import_fs2 = __toESM(require("fs"));
+
+// server/utils/imageCompression.ts
+var import_sharp = __toESM(require("sharp"));
+var MAX_WIDTH = 1600;
+var WEBP_QUALITY = 80;
+async function compressImage(input) {
+  const image = (0, import_sharp.default)(input, { failOn: "none" });
+  const metadata = await image.metadata();
+  let pipeline = image.rotate();
+  if (metadata.width && metadata.width > MAX_WIDTH) {
+    pipeline = pipeline.resize({ width: MAX_WIDTH, withoutEnlargement: true });
+  }
+  const buffer = await pipeline.webp({ quality: WEBP_QUALITY }).toBuffer();
+  return {
+    buffer,
+    contentType: "image/webp",
+    ext: ".webp"
+  };
+}
+
+// server/middleware/upload.ts
 var fileFilter = (_req, file, cb) => {
   const allowedTypes = config.upload.allowedTypes;
   const fileMime = file.mimetype.toLowerCase();
@@ -1034,19 +1055,24 @@ var upload = (0, import_multer.default)({
     files: 1
   }
 });
-async function uploadToBlob(buffer, originalname, mimetype) {
+async function uploadToBlob(buffer, originalname) {
+  const { buffer: optimized, contentType, ext } = await compressImage(buffer);
   const timestamp = Date.now();
   const randomString = Math.random().toString(36).substring(2, 8);
-  const ext = import_path2.default.extname(originalname).toLowerCase();
   const filename = `${timestamp}-${randomString}${ext}`;
   if (config.blob.readWriteToken) {
     const { put } = await import("@vercel/blob");
-    const blob = await put(`gallery/${filename}`, buffer, {
+    const blob = await put(`gallery/${filename}`, optimized, {
       access: "public",
-      contentType: mimetype,
+      contentType,
       token: config.blob.readWriteToken
     });
-    logger.info("File uploaded to Vercel Blob", { url: blob.url });
+    logger.info("File uploaded to Vercel Blob", {
+      url: blob.url,
+      originalName: originalname,
+      originalBytes: buffer.length,
+      optimizedBytes: optimized.length
+    });
     return blob.url;
   } else {
     const tmpDir = "/tmp/uploads";
@@ -1054,8 +1080,8 @@ async function uploadToBlob(buffer, originalname, mimetype) {
       import_fs2.default.mkdirSync(tmpDir, { recursive: true });
     }
     const filePath = import_path2.default.join(tmpDir, filename);
-    import_fs2.default.writeFileSync(filePath, buffer);
-    logger.info("File saved to local /tmp fallback", { filePath });
+    import_fs2.default.writeFileSync(filePath, optimized);
+    logger.info("File saved to local /tmp fallback", { filePath, originalName: originalname });
     return `/tmp-uploads/${filename}`;
   }
 }
@@ -1207,7 +1233,7 @@ var GalleryController = class {
     try {
       const validatedData = createGalleryImageSchema.parse(req.body);
       if (req.file) {
-        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname, req.file.mimetype);
+        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname);
         validatedData.image_url = blobUrl;
       }
       const image = await galleryRepository.createImage({
@@ -1248,7 +1274,7 @@ var GalleryController = class {
       }
       const validatedData = updateGalleryImageSchema.parse(req.body);
       if (req.file) {
-        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname, req.file.mimetype);
+        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname);
         validatedData.image_url = blobUrl;
       }
       const image = await galleryRepository.updateImage(id, validatedData);

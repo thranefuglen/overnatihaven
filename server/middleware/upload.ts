@@ -4,6 +4,7 @@ import fs from 'fs';
 import { Request, Response, NextFunction } from 'express';
 import { config } from '../config/env';
 import { logger } from '../config/logger';
+import { compressImage } from '../utils/imageCompression';
 
 /**
  * Configure multer with memory storage (file lives in req.file.buffer)
@@ -31,27 +32,35 @@ export const upload = multer({
 
 /**
  * Upload a file buffer to Vercel Blob (production) or /tmp (local dev).
- * Returns the public URL for the uploaded file.
+ *
+ * The buffer is compressed first (downscaled + converted to WebP) to keep
+ * Vercel Blob egress low — the raw upload could be up to 5 MB, the compressed
+ * version is typically 10-30× smaller. Returns the public URL for the file.
  */
 export async function uploadToBlob(
   buffer: Buffer,
-  originalname: string,
-  mimetype: string
+  originalname: string
 ): Promise<string> {
+  const { buffer: optimized, contentType, ext } = await compressImage(buffer);
+
   const timestamp = Date.now();
   const randomString = Math.random().toString(36).substring(2, 8);
-  const ext = path.extname(originalname).toLowerCase();
   const filename = `${timestamp}-${randomString}${ext}`;
 
   if (config.blob.readWriteToken) {
     // Production: upload to Vercel Blob
     const { put } = await import('@vercel/blob');
-    const blob = await put(`gallery/${filename}`, buffer, {
+    const blob = await put(`gallery/${filename}`, optimized, {
       access: 'public',
-      contentType: mimetype,
+      contentType,
       token: config.blob.readWriteToken,
     });
-    logger.info('File uploaded to Vercel Blob', { url: blob.url });
+    logger.info('File uploaded to Vercel Blob', {
+      url: blob.url,
+      originalName: originalname,
+      originalBytes: buffer.length,
+      optimizedBytes: optimized.length,
+    });
     return blob.url;
   } else {
     // Local dev fallback: save to /tmp/uploads/
@@ -60,8 +69,8 @@ export async function uploadToBlob(
       fs.mkdirSync(tmpDir, { recursive: true });
     }
     const filePath = path.join(tmpDir, filename);
-    fs.writeFileSync(filePath, buffer);
-    logger.info('File saved to local /tmp fallback', { filePath });
+    fs.writeFileSync(filePath, optimized);
+    logger.info('File saved to local /tmp fallback', { filePath, originalName: originalname });
     return `/tmp-uploads/${filename}`;
   }
 }
