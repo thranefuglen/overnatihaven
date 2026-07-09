@@ -69,18 +69,18 @@ describe('InquiryService', () => {
   });
 
   describe('checkAvailability', () => {
-    it('should return true when dates are available', () => {
+    it('should return true when dates are available', async () => {
       (inquiryRepository.hasOverlap as jest.Mock).mockReturnValue(false);
 
-      const result = inquiryService.checkAvailability('2025-06-01', '2025-06-03');
+      const result = await inquiryService.checkAvailability('2025-06-01', '2025-06-03');
 
       expect(result).toBe(true);
     });
 
-    it('should return false when dates are not available', () => {
+    it('should return false when dates are not available', async () => {
       (inquiryRepository.hasOverlap as jest.Mock).mockReturnValue(true);
 
-      const result = inquiryService.checkAvailability('2025-06-01', '2025-06-03');
+      const result = await inquiryService.checkAvailability('2025-06-01', '2025-06-03');
 
       expect(result).toBe(false);
     });

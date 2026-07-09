@@ -136,7 +136,7 @@ export class GalleryController {
 
       // Upload file to blob storage if provided
       if (req.file) {
-        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname, req.file.mimetype);
+        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname);
         validatedData.image_url = blobUrl;
       }
 
@@ -185,7 +185,7 @@ export class GalleryController {
 
       // Upload file to blob storage if provided
       if (req.file) {
-        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname, req.file.mimetype);
+        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname);
         validatedData.image_url = blobUrl;
       }
 
