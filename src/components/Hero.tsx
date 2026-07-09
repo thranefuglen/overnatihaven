@@ -13,6 +13,11 @@ const Hero = () => {
   const [layerB, setLayerB] = useState({ imageIndex: 1 })
   const [topLayer, setTopLayer] = useState<'A' | 'B'>('A') // which layer is currently visible on top
   const [fading, setFading] = useState(false)
+  // Slideshowet pauser når hero'en er scrollet ud af viewporten, så vi ikke
+  // bliver ved med at hente nye billeder fra blob for en bruger der læser
+  // længere nede på siden.
+  const [inView, setInView] = useState(true)
+  const sectionRef = useRef<HTMLElement | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const cycleRef = useRef(0)
 
@@ -60,9 +65,25 @@ const Hero = () => {
     [images]
   )
 
+  // Observe whether the hero section is visible
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting)
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   // Start the slideshow cycle
   useEffect(() => {
     if (images.length <= 1) return
+    if (!inView) {
+      // Nulstil et evt. afbrudt fade, så det viste lag ikke står halvt usynligt
+      setFading(false)
+      return
+    }
 
     const startTransition = () => {
       cycleRef.current++
@@ -100,7 +121,7 @@ const Hero = () => {
       clearInterval(interval)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [images.length, preload, topLayer])
+  }, [images.length, preload, topLayer, inView])
 
   const scrollToContact = () => {
     const element = document.querySelector('#contact')
@@ -114,7 +135,7 @@ const Hero = () => {
   const aIsTop = topLayer === 'A'
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center pt-16 sm:pt-20 overflow-hidden">
+    <section ref={sectionRef} id="hero" className="relative min-h-screen flex items-center pt-16 sm:pt-20 overflow-hidden">
       {/* Background Slideshow */}
       <div className="absolute inset-0 z-0">
         {/* Gradient overlay - on top of images */}

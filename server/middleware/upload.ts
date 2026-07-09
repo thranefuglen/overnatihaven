@@ -4,7 +4,7 @@ import fs from 'fs';
 import { Request, Response, NextFunction } from 'express';
 import { config } from '../config/env';
 import { logger } from '../config/logger';
-import { compressImage } from '../utils/imageCompression';
+import { compressImage, THUMB_WIDTH } from '../utils/imageCompression';
 
 /**
  * Configure multer with memory storage (file lives in req.file.buffer)
@@ -30,48 +30,85 @@ export const upload = multer({
   },
 });
 
+export interface UploadedImage {
+  /** URL til fuld-størrelses-varianten (maks. MAX_WIDTH, WebP). */
+  url: string;
+  /** URL til thumbnail-varianten (maks. THUMB_WIDTH, WebP) til karrusel/grid. */
+  thumbUrl: string;
+}
+
+/**
+ * Filerne er immutable — hvert upload får et nyt unikt filnavn — så browseren
+ * må cache dem så længe som muligt. Gengangere henter dermed aldrig billederne
+ * igen, hvilket skærer direkte i blob-egress.
+ */
+const CACHE_MAX_AGE_SECONDS = 365 * 24 * 60 * 60; // 1 år
+
 /**
  * Upload a file buffer to Vercel Blob (production) or /tmp (local dev).
  *
  * The buffer is compressed first (downscaled + converted to WebP) to keep
  * Vercel Blob egress low — the raw upload could be up to 5 MB, the compressed
- * version is typically 10-30× smaller. Returns the public URL for the file.
+ * version is typically 10-30× smaller. A ~THUMB_WIDTH px thumbnail variant is
+ * uploaded alongside for the gallery carousel, so visitors only pay for the
+ * full-size file when they open the lightbox.
  */
 export async function uploadToBlob(
   buffer: Buffer,
   originalname: string
-): Promise<string> {
-  const { buffer: optimized, contentType, ext } = await compressImage(buffer);
+): Promise<UploadedImage> {
+  const [full, thumb] = await Promise.all([
+    compressImage(buffer),
+    compressImage(buffer, THUMB_WIDTH),
+  ]);
 
   const timestamp = Date.now();
   const randomString = Math.random().toString(36).substring(2, 8);
-  const filename = `${timestamp}-${randomString}${ext}`;
+  const filename = `${timestamp}-${randomString}${full.ext}`;
+  const thumbFilename = `${timestamp}-${randomString}-thumb${thumb.ext}`;
 
   if (config.blob.readWriteToken) {
     // Production: upload to Vercel Blob
     const { put } = await import('@vercel/blob');
-    const blob = await put(`gallery/${filename}`, optimized, {
-      access: 'public',
-      contentType,
-      token: config.blob.readWriteToken,
-    });
+    const [blob, thumbBlob] = await Promise.all([
+      put(`gallery/${filename}`, full.buffer, {
+        access: 'public',
+        contentType: full.contentType,
+        cacheControlMaxAge: CACHE_MAX_AGE_SECONDS,
+        token: config.blob.readWriteToken,
+      }),
+      put(`gallery/${thumbFilename}`, thumb.buffer, {
+        access: 'public',
+        contentType: thumb.contentType,
+        cacheControlMaxAge: CACHE_MAX_AGE_SECONDS,
+        token: config.blob.readWriteToken,
+      }),
+    ]);
     logger.info('File uploaded to Vercel Blob', {
       url: blob.url,
+      thumbUrl: thumbBlob.url,
       originalName: originalname,
       originalBytes: buffer.length,
-      optimizedBytes: optimized.length,
+      optimizedBytes: full.buffer.length,
+      thumbBytes: thumb.buffer.length,
     });
-    return blob.url;
+    return { url: blob.url, thumbUrl: thumbBlob.url };
   } else {
     // Local dev fallback: save to /tmp/uploads/
     const tmpDir = '/tmp/uploads';
     if (!fs.existsSync(tmpDir)) {
       fs.mkdirSync(tmpDir, { recursive: true });
     }
-    const filePath = path.join(tmpDir, filename);
-    fs.writeFileSync(filePath, optimized);
-    logger.info('File saved to local /tmp fallback', { filePath, originalName: originalname });
-    return `/tmp-uploads/${filename}`;
+    fs.writeFileSync(path.join(tmpDir, filename), full.buffer);
+    fs.writeFileSync(path.join(tmpDir, thumbFilename), thumb.buffer);
+    logger.info('File saved to local /tmp fallback', {
+      filePath: path.join(tmpDir, filename),
+      originalName: originalname,
+    });
+    return {
+      url: `/tmp-uploads/${filename}`,
+      thumbUrl: `/tmp-uploads/${thumbFilename}`,
+    };
   }
 }
 

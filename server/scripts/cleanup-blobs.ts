@@ -6,7 +6,8 @@ import { config } from '../config/env';
  * Rydder forældreløse filer op i Vercel Blob.
  *
  * En blob-fil regnes som forældreløs, hvis dens URL ikke længere optræder
- * som image_url på nogen række i gallery_images-tabellen. Det dækker både:
+ * som image_url eller thumb_url på nogen række i gallery_images-tabellen.
+ * Det dækker både:
  *   - billeder der er hard-deleted (rækken fjernet, filen efterladt)
  *   - gamle filer efterladt efter et "erstat billede"-upload
  *
@@ -27,16 +28,16 @@ async function main() {
 
   console.log(`\n🔍 Mode: ${shouldDelete ? 'SLET (--delete)' : 'DRY-RUN (ingen sletning)'}\n`);
 
-  // 1. Alle image_url'er der stadig er i brug i databasen
-  const rows = await query<{ image_url: string | null }>(
-    'SELECT image_url FROM gallery_images'
+  // 1. Alle image_url'er og thumb_url'er der stadig er i brug i databasen
+  const rows = await query<{ image_url: string | null; thumb_url: string | null }>(
+    'SELECT image_url, thumb_url FROM gallery_images'
   );
   const referenced = new Set(
     rows
-      .map((r) => r.image_url)
+      .flatMap((r) => [r.image_url, r.thumb_url])
       .filter((u): u is string => !!u)
   );
-  console.log(`📚 ${referenced.size} billeder refereret i databasen.`);
+  console.log(`📚 ${referenced.size} blob-URL'er refereret i databasen.`);
 
   // 2. Alle blobs under gallery/-prefixet (paginér for en sikkerheds skyld)
   const blobs: { url: string; pathname: string; size: number }[] = [];

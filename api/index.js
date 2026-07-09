@@ -185,8 +185,9 @@ var import_nodemailer = __toESM(require("nodemailer"));
 var import_dotenv = __toESM(require("dotenv"));
 import_dotenv.default.config();
 var config = {
-  // Server
-  port: parseInt(process.env.PORT || "3000", 10),
+  // Server — API_PORT frem for PORT: eksterne værktøjer (fx preview-servere)
+  // sætter PORT for frontenden, og den må ikke smitte af på backenden.
+  port: parseInt(process.env.API_PORT || "3000", 10),
   nodeEnv: process.env.NODE_ENV || "development",
   // Email
   email: {
@@ -578,6 +579,7 @@ var createGalleryImageSchema = import_zod2.z.object({
   title: import_zod2.z.string().min(1, "Titel er p\xE5kr\xE6vet").max(255, "Titel m\xE5 max v\xE6re 255 tegn"),
   description: import_zod2.z.string().max(1e3, "Beskrivelse m\xE5 max v\xE6re 1000 tegn").optional(),
   image_url: import_zod2.z.string().optional(),
+  thumb_url: import_zod2.z.string().nullable().optional(),
   file_path: import_zod2.z.string().optional(),
   is_active: import_zod2.z.preprocess((val) => val === "true" || val === true, import_zod2.z.boolean()).default(true),
   show_in_hero: import_zod2.z.preprocess((val) => val === "true" || val === true, import_zod2.z.boolean()).default(false),
@@ -818,7 +820,7 @@ var GalleryRepository = class {
   async getActiveImages() {
     try {
       const rows = await query(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, thumb_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          WHERE is_active = true
          ORDER BY sort_order ASC, created_at DESC`
@@ -835,7 +837,7 @@ var GalleryRepository = class {
   async getHeroImages() {
     try {
       const rows = await query(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, thumb_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          WHERE show_in_hero = true AND is_active = true
          ORDER BY sort_order ASC, created_at DESC`
@@ -853,7 +855,7 @@ var GalleryRepository = class {
   async getAllImages() {
     try {
       const rows = await query(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, thumb_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          ORDER BY sort_order ASC, created_at DESC`
       );
@@ -869,7 +871,7 @@ var GalleryRepository = class {
   async getImageById(id) {
     try {
       const row = await queryOne(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, thumb_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          WHERE id = $1`,
         [id]
@@ -885,7 +887,7 @@ var GalleryRepository = class {
    */
   async createImage(imageData) {
     try {
-      const { title, description, image_url, is_active, sort_order } = imageData;
+      const { title, description, image_url, thumb_url, is_active, sort_order } = imageData;
       let finalSortOrder = sort_order || 0;
       if (finalSortOrder === 0) {
         const maxSortResult = await queryOne(
@@ -895,10 +897,10 @@ var GalleryRepository = class {
         finalSortOrder = maxSort + 1;
       }
       const result = await queryOne(
-        `INSERT INTO gallery_images (title, description, image_url, is_active, sort_order)
-         VALUES ($1, $2, $3, $4, $5)
+        `INSERT INTO gallery_images (title, description, image_url, thumb_url, is_active, sort_order)
+         VALUES ($1, $2, $3, $4, $5, $6)
          RETURNING id`,
-        [title, description, image_url, is_active, finalSortOrder]
+        [title, description, image_url, thumb_url ?? null, is_active, finalSortOrder]
       );
       if (!result) {
         throw new Error("Failed to create image");
@@ -918,7 +920,7 @@ var GalleryRepository = class {
    */
   async updateImage(id, imageData) {
     try {
-      const { title, description, image_url, file_path, is_active, show_in_hero, sort_order } = imageData;
+      const { title, description, image_url, thumb_url, file_path, is_active, show_in_hero, sort_order } = imageData;
       const updateFields = [];
       const updateValues = [];
       let paramIndex = 1;
@@ -933,6 +935,10 @@ var GalleryRepository = class {
       if (image_url !== void 0) {
         updateFields.push(`image_url = $${paramIndex++}`);
         updateValues.push(image_url);
+      }
+      if (thumb_url !== void 0) {
+        updateFields.push(`thumb_url = $${paramIndex++}`);
+        updateValues.push(thumb_url);
       }
       if (file_path !== void 0) {
         updateFields.push(`image_path = $${paramIndex++}`);
@@ -1021,13 +1027,14 @@ var import_fs2 = __toESM(require("fs"));
 // server/utils/imageCompression.ts
 var import_sharp = __toESM(require("sharp"));
 var MAX_WIDTH = 1600;
+var THUMB_WIDTH = 960;
 var WEBP_QUALITY = 80;
-async function compressImage(input) {
+async function compressImage(input, maxWidth = MAX_WIDTH) {
   const image = (0, import_sharp.default)(input, { failOn: "none" });
   const metadata = await image.metadata();
   let pipeline = image.rotate();
-  if (metadata.width && metadata.width > MAX_WIDTH) {
-    pipeline = pipeline.resize({ width: MAX_WIDTH, withoutEnlargement: true });
+  if (metadata.width && metadata.width > maxWidth) {
+    pipeline = pipeline.resize({ width: maxWidth, withoutEnlargement: true });
   }
   const buffer = await pipeline.webp({ quality: WEBP_QUALITY }).toBuffer();
   return {
@@ -1055,34 +1062,56 @@ var upload = (0, import_multer.default)({
     files: 1
   }
 });
+var CACHE_MAX_AGE_SECONDS = 365 * 24 * 60 * 60;
 async function uploadToBlob(buffer, originalname) {
-  const { buffer: optimized, contentType, ext } = await compressImage(buffer);
+  const [full, thumb] = await Promise.all([
+    compressImage(buffer),
+    compressImage(buffer, THUMB_WIDTH)
+  ]);
   const timestamp = Date.now();
   const randomString = Math.random().toString(36).substring(2, 8);
-  const filename = `${timestamp}-${randomString}${ext}`;
+  const filename = `${timestamp}-${randomString}${full.ext}`;
+  const thumbFilename = `${timestamp}-${randomString}-thumb${thumb.ext}`;
   if (config.blob.readWriteToken) {
     const { put } = await import("@vercel/blob");
-    const blob = await put(`gallery/${filename}`, optimized, {
-      access: "public",
-      contentType,
-      token: config.blob.readWriteToken
-    });
+    const [blob, thumbBlob] = await Promise.all([
+      put(`gallery/${filename}`, full.buffer, {
+        access: "public",
+        contentType: full.contentType,
+        cacheControlMaxAge: CACHE_MAX_AGE_SECONDS,
+        token: config.blob.readWriteToken
+      }),
+      put(`gallery/${thumbFilename}`, thumb.buffer, {
+        access: "public",
+        contentType: thumb.contentType,
+        cacheControlMaxAge: CACHE_MAX_AGE_SECONDS,
+        token: config.blob.readWriteToken
+      })
+    ]);
     logger.info("File uploaded to Vercel Blob", {
       url: blob.url,
+      thumbUrl: thumbBlob.url,
       originalName: originalname,
       originalBytes: buffer.length,
-      optimizedBytes: optimized.length
+      optimizedBytes: full.buffer.length,
+      thumbBytes: thumb.buffer.length
     });
-    return blob.url;
+    return { url: blob.url, thumbUrl: thumbBlob.url };
   } else {
     const tmpDir = "/tmp/uploads";
     if (!import_fs2.default.existsSync(tmpDir)) {
       import_fs2.default.mkdirSync(tmpDir, { recursive: true });
     }
-    const filePath = import_path2.default.join(tmpDir, filename);
-    import_fs2.default.writeFileSync(filePath, optimized);
-    logger.info("File saved to local /tmp fallback", { filePath, originalName: originalname });
-    return `/tmp-uploads/${filename}`;
+    import_fs2.default.writeFileSync(import_path2.default.join(tmpDir, filename), full.buffer);
+    import_fs2.default.writeFileSync(import_path2.default.join(tmpDir, thumbFilename), thumb.buffer);
+    logger.info("File saved to local /tmp fallback", {
+      filePath: import_path2.default.join(tmpDir, filename),
+      originalName: originalname
+    });
+    return {
+      url: `/tmp-uploads/${filename}`,
+      thumbUrl: `/tmp-uploads/${thumbFilename}`
+    };
   }
 }
 function handleUploadError(error, req, res, next) {
@@ -1233,13 +1262,16 @@ var GalleryController = class {
     try {
       const validatedData = createGalleryImageSchema.parse(req.body);
       if (req.file) {
-        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname);
-        validatedData.image_url = blobUrl;
+        const uploaded = await uploadToBlob(req.file.buffer, req.file.originalname);
+        validatedData.image_url = uploaded.url;
+        validatedData.thumb_url = uploaded.thumbUrl;
       }
       const image = await galleryRepository.createImage({
         title: validatedData.title,
         description: validatedData.description,
         image_url: validatedData.image_url || "",
+        thumb_url: validatedData.thumb_url,
+        show_in_hero: validatedData.show_in_hero,
         sort_order: validatedData.sort_order || 0,
         is_active: true
       });
@@ -1274,8 +1306,14 @@ var GalleryController = class {
       }
       const validatedData = updateGalleryImageSchema.parse(req.body);
       if (req.file) {
-        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname);
-        validatedData.image_url = blobUrl;
+        const uploaded = await uploadToBlob(req.file.buffer, req.file.originalname);
+        validatedData.image_url = uploaded.url;
+        validatedData.thumb_url = uploaded.thumbUrl;
+      } else if (validatedData.image_url !== void 0 && validatedData.thumb_url === void 0) {
+        const existing = await galleryRepository.getImageById(id);
+        if (existing && existing.image_url !== validatedData.image_url) {
+          validatedData.thumb_url = null;
+        }
       }
       const image = await galleryRepository.updateImage(id, validatedData);
       if (!image) {
@@ -2280,6 +2318,7 @@ CREATE TABLE IF NOT EXISTS gallery_images (\r
     title TEXT,\r
     description TEXT,\r
     image_url TEXT NOT NULL,\r
+    thumb_url TEXT,\r
     image_path TEXT,\r
     sort_order INTEGER DEFAULT 0,\r
     is_active BOOLEAN DEFAULT true,\r
@@ -2391,6 +2430,9 @@ DELETE FROM gallery_images WHERE id NOT IN (SELECT MIN(id) FROM gallery_images G
 \r
 -- Add show_in_hero column if it doesn't exist (migration for existing databases)\r
 ALTER TABLE gallery_images ADD COLUMN IF NOT EXISTS show_in_hero BOOLEAN DEFAULT false;\r
+\r
+-- Add thumb_url column if it doesn't exist (thumbnail-variant til karrusel/lightbox-split)\r
+ALTER TABLE gallery_images ADD COLUMN IF NOT EXISTS thumb_url TEXT;\r
 \r
 -- Add unique index on image_url to prevent duplicates from repeated migrations\r
 CREATE UNIQUE INDEX IF NOT EXISTS idx_gallery_images_url_unique ON gallery_images(image_url);\r

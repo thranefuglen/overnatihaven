@@ -3,6 +3,7 @@ export interface GalleryImage {
   title: string
   description: string | null
   image_url: string
+  thumb_url: string | null
   file_path: string | null
   is_active: boolean
   show_in_hero: boolean

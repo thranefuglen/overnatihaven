@@ -7,6 +7,7 @@ interface GalleryImage {
   title: string
   description: string | null
   image_url: string
+  thumb_url: string | null
   file_path: string | null
   is_active: boolean
   show_in_hero: boolean
@@ -267,9 +268,10 @@ const GalleryAdmin: React.FC = () => {
                   {/* Image thumbnail */}
                   <div className="flex-shrink-0">
                     <img
-                      src={image.image_url}
+                      src={image.thumb_url ?? image.image_url}
                       alt={image.title}
                       className="h-16 w-16 rounded-lg object-cover"
+                      loading="lazy"
                     />
                   </div>
 

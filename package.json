@@ -19,6 +19,7 @@
     "db:migrate": "esbuild server/db/migrate.ts --bundle --platform=node --format=cjs --packages=external --loader:.sql=text --outfile=node_modules/.cache/migrate.cjs && node node_modules/.cache/migrate.cjs",
     "blob:cleanup": "tsx server/scripts/cleanup-blobs.ts",
     "blob:compress": "tsx server/scripts/compress-blobs.ts",
+    "blob:thumbs": "tsx server/scripts/backfill-thumbs.ts",
     "blob:diagnose": "tsx server/scripts/diagnose-blobs.ts",
     "prod-env": "node scripts/with-prod-env.mjs"
   },

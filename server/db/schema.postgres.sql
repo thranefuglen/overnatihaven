@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS gallery_images (
     title TEXT,
     description TEXT,
     image_url TEXT NOT NULL,
+    thumb_url TEXT,
     image_path TEXT,
     sort_order INTEGER DEFAULT 0,
     is_active BOOLEAN DEFAULT true,
@@ -116,6 +117,9 @@ DELETE FROM gallery_images WHERE id NOT IN (SELECT MIN(id) FROM gallery_images G
 
 -- Add show_in_hero column if it doesn't exist (migration for existing databases)
 ALTER TABLE gallery_images ADD COLUMN IF NOT EXISTS show_in_hero BOOLEAN DEFAULT false;
+
+-- Add thumb_url column if it doesn't exist (thumbnail-variant til karrusel/lightbox-split)
+ALTER TABLE gallery_images ADD COLUMN IF NOT EXISTS thumb_url TEXT;
 
 -- Add unique index on image_url to prevent duplicates from repeated migrations
 CREATE UNIQUE INDEX IF NOT EXISTS idx_gallery_images_url_unique ON gallery_images(image_url);
