@@ -12,6 +12,14 @@ import sharp from 'sharp';
 /** Maks. bredde i pixels. Billeder bredere end dette nedskaleres; smallere røres ikke. */
 export const MAX_WIDTH = 1600;
 
+/**
+ * Bredde på thumbnail-varianten der vises i galleri-karrusellen.
+ * Karrusellen er op til 896px bred (max-w-4xl); 960px dækker det slot uden
+ * synligt kvalitetstab på alm. skærme. Frontenden bruger srcset, så
+ * high-DPI-skærme stadig får fuld-størrelses-varianten (MAX_WIDTH).
+ */
+export const THUMB_WIDTH = 960;
+
 /** WebP-kvalitet (0-100). 80 er et godt kompromis mellem størrelse og udseende. */
 export const WEBP_QUALITY = 80;
 
@@ -24,9 +32,12 @@ export interface CompressedImage {
 
 /**
  * Komprimér et billed-buffer: respektér EXIF-orientering, nedskalér til
- * maks. MAX_WIDTH og konvertér til WebP. Returnerer altid WebP.
+ * maks. maxWidth (default MAX_WIDTH) og konvertér til WebP. Returnerer altid WebP.
  */
-export async function compressImage(input: Buffer): Promise<CompressedImage> {
+export async function compressImage(
+  input: Buffer,
+  maxWidth: number = MAX_WIDTH
+): Promise<CompressedImage> {
   const image = sharp(input, { failOn: 'none' });
   const metadata = await image.metadata();
 
@@ -34,8 +45,8 @@ export async function compressImage(input: Buffer): Promise<CompressedImage> {
   // så billedet vender rigtigt når EXIF-data strippes ved konvertering.
   let pipeline = image.rotate();
 
-  if (metadata.width && metadata.width > MAX_WIDTH) {
-    pipeline = pipeline.resize({ width: MAX_WIDTH, withoutEnlargement: true });
+  if (metadata.width && metadata.width > maxWidth) {
+    pipeline = pipeline.resize({ width: maxWidth, withoutEnlargement: true });
   }
 
   const buffer = await pipeline.webp({ quality: WEBP_QUALITY }).toBuffer();

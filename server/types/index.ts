@@ -65,6 +65,7 @@ export const createGalleryImageSchema = z.object({
   title: z.string().min(1, 'Titel er påkrævet').max(255, 'Titel må max være 255 tegn'),
   description: z.string().max(1000, 'Beskrivelse må max være 1000 tegn').optional(),
   image_url: z.string().optional(),
+  thumb_url: z.string().nullable().optional(),
   file_path: z.string().optional(),
   is_active: z.preprocess(val => val === 'true' || val === true, z.boolean()).default(true),
   show_in_hero: z.preprocess(val => val === 'true' || val === true, z.boolean()).default(false),
@@ -102,6 +103,7 @@ export interface GalleryImage {
   title: string;
   description: string | null;
   image_url: string;
+  thumb_url: string | null;
   file_path: string | null;
   is_active: boolean;
   show_in_hero: boolean;

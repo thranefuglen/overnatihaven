@@ -11,7 +11,7 @@ export class GalleryRepository {
   async getActiveImages(): Promise<GalleryImage[]> {
     try {
       const rows = await query<GalleryImage>(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, thumb_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          WHERE is_active = true
          ORDER BY sort_order ASC, created_at DESC`
@@ -29,7 +29,7 @@ export class GalleryRepository {
   async getHeroImages(): Promise<GalleryImage[]> {
     try {
       const rows = await query<GalleryImage>(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, thumb_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          WHERE show_in_hero = true AND is_active = true
          ORDER BY sort_order ASC, created_at DESC`
@@ -49,7 +49,7 @@ export class GalleryRepository {
   async getAllImages(): Promise<GalleryImage[]> {
     try {
       const rows = await query<GalleryImage>(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, thumb_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          ORDER BY sort_order ASC, created_at DESC`
       );
@@ -66,7 +66,7 @@ export class GalleryRepository {
   async getImageById(id: number): Promise<GalleryImage | null> {
     try {
       const row = await queryOne<GalleryImage>(
-        `SELECT id, title, description, image_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
+        `SELECT id, title, description, image_url, thumb_url, image_path as file_path, is_active, show_in_hero, sort_order, created_at, updated_at
          FROM gallery_images
          WHERE id = $1`,
         [id]
@@ -83,7 +83,7 @@ export class GalleryRepository {
    */
   async createImage(imageData: CreateGalleryImageInput): Promise<GalleryImage> {
     try {
-      const { title, description, image_url, is_active, sort_order } = imageData;
+      const { title, description, image_url, thumb_url, is_active, sort_order } = imageData;
 
       // Get the next sort order if not provided
       let finalSortOrder = sort_order || 0;
@@ -96,10 +96,10 @@ export class GalleryRepository {
       }
 
       const result = await queryOne<{ id: number }>(
-        `INSERT INTO gallery_images (title, description, image_url, is_active, sort_order)
-         VALUES ($1, $2, $3, $4, $5)
+        `INSERT INTO gallery_images (title, description, image_url, thumb_url, is_active, sort_order)
+         VALUES ($1, $2, $3, $4, $5, $6)
          RETURNING id`,
-        [title, description, image_url, is_active, finalSortOrder]
+        [title, description, image_url, thumb_url ?? null, is_active, finalSortOrder]
       );
 
       if (!result) {
@@ -124,7 +124,7 @@ export class GalleryRepository {
    */
   async updateImage(id: number, imageData: UpdateGalleryImageInput): Promise<GalleryImage | null> {
     try {
-      const { title, description, image_url, file_path, is_active, show_in_hero, sort_order } = imageData;
+      const { title, description, image_url, thumb_url, file_path, is_active, show_in_hero, sort_order } = imageData;
 
       // Build dynamic update query
       const updateFields: string[] = [];
@@ -142,6 +142,10 @@ export class GalleryRepository {
       if (image_url !== undefined) {
         updateFields.push(`image_url = $${paramIndex++}`);
         updateValues.push(image_url);
+      }
+      if (thumb_url !== undefined) {
+        updateFields.push(`thumb_url = $${paramIndex++}`);
+        updateValues.push(thumb_url);
       }
       if (file_path !== undefined) {
         updateFields.push(`image_path = $${paramIndex++}`);

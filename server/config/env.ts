@@ -4,8 +4,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const config = {
-  // Server
-  port: parseInt(process.env.PORT || '3000', 10),
+  // Server — API_PORT frem for PORT: eksterne værktøjer (fx preview-servere)
+  // sætter PORT for frontenden, og den må ikke smitte af på backenden.
+  port: parseInt(process.env.API_PORT || '3000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   
   // Email

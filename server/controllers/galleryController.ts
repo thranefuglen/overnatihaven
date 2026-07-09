@@ -136,14 +136,17 @@ export class GalleryController {
 
       // Upload file to blob storage if provided
       if (req.file) {
-        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname);
-        validatedData.image_url = blobUrl;
+        const uploaded = await uploadToBlob(req.file.buffer, req.file.originalname);
+        validatedData.image_url = uploaded.url;
+        validatedData.thumb_url = uploaded.thumbUrl;
       }
 
       const image = await galleryRepository.createImage({
         title: validatedData.title,
         description: validatedData.description,
         image_url: validatedData.image_url || '',
+        thumb_url: validatedData.thumb_url,
+        show_in_hero: validatedData.show_in_hero,
         sort_order: validatedData.sort_order || 0,
         is_active: true
       });
@@ -185,8 +188,16 @@ export class GalleryController {
 
       // Upload file to blob storage if provided
       if (req.file) {
-        const blobUrl = await uploadToBlob(req.file.buffer, req.file.originalname);
-        validatedData.image_url = blobUrl;
+        const uploaded = await uploadToBlob(req.file.buffer, req.file.originalname);
+        validatedData.image_url = uploaded.url;
+        validatedData.thumb_url = uploaded.thumbUrl;
+      } else if (validatedData.image_url !== undefined && validatedData.thumb_url === undefined) {
+        // Manuel URL-ændring uden nyt upload: nulstil thumbnailen hvis URL'en
+        // faktisk er en anden, så karrusellen ikke viser en forældet thumbnail.
+        const existing = await galleryRepository.getImageById(id);
+        if (existing && existing.image_url !== validatedData.image_url) {
+          validatedData.thumb_url = null;
+        }
       }
 
       const image = await galleryRepository.updateImage(id, validatedData);
