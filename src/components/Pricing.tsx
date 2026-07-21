@@ -28,7 +28,7 @@ const sleepOptions: SleepOption[] = [
   {
     icon: BedDouble,
     title: 'Ét shelter med opredning',
-    description: 'Madras med færdig opredning — dyne, pude og lagner.',
+    description: 'Madras med opredning — dyne, pude og sengetøj.',
     priceDkk: 100,
     priceEur: 15,
   },
