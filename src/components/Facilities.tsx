@@ -89,6 +89,14 @@ const Facilities = () => {
                   <span>Cykelrute 10 &amp; 11 går næsten lige forbi</span>
                 </li>
                 <li className="flex items-start">
+                  <LucideIcons.Fish className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0" />
+                  <span>1,5 km til Kongeåen, hvor der er mulighed for at vandre på Kongeåstien, samt lystfiskeri. Fisk må rengøres i udekøkken</span>
+                </li>
+                <li className="flex items-start">
+                  <LucideIcons.Coffee className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-3 flex-shrink-0" />
+                  <span>Drikkevarer på køl til indkøbspris samt fri kaffe og te</span>
+                </li>
+                <li className="flex items-start">
                   <LucideIcons.AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400 mr-3 flex-shrink-0" />
                   <span>Færdsel i haven er på eget ansvar</span>
                 </li>
